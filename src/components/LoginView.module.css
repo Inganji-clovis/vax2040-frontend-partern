@@ -1,0 +1,223 @@
+/* LoginView.module.css — VAX2040 Partner Modal */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.card {
+  background: #FFFFFF;
+  border: 1px solid rgba(210, 105, 30, 0.1);
+  border-radius: 20px;
+  padding: 32px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ── Header ─────────────────────────────────────────────── */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.logo { height: 28px; object-fit: contain; }
+.modeBadge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #B95C0A;
+  background: rgba(210, 105, 30, 0.08);
+  border: 1px solid rgba(210, 105, 30, 0.15);
+  padding: 4px 10px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ── Mode Switcher ──────────────────────────────────────── */
+.modeSwitcher {
+  display: flex;
+  background: rgba(15, 23, 42, 0.04);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 3px;
+  gap: 2px;
+}
+.modeBtn {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  background: transparent;
+  border-radius: 7px;
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.modeBtnActive {
+  background: #fff;
+  color: var(--text-primary);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.07);
+}
+
+/* ── Alerts ─────────────────────────────────────────────── */
+.errorAlert {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 14px;
+  background: rgba(239, 68, 68, 0.06);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 8px;
+  color: #DC2626;
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+.successAlert {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 11px 14px;
+  background: rgba(210, 105, 30, 0.06);
+  border: 1px solid rgba(210, 105, 30, 0.18);
+  border-radius: 8px;
+  color: #B95C0A;
+  font-size: 0.82rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.successAlert strong { font-weight: 700; }
+
+/* ── Form ───────────────────────────────────────────────── */
+.form { display: flex; flex-direction: column; gap: 16px; }
+.formDesc {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+.field { display: flex; flex-direction: column; gap: 6px; }
+.label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.required { color: #EF4444; }
+.optional { color: var(--text-muted); font-weight: 400; }
+.input,
+.select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.87rem;
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  background: var(--bg);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+}
+.input:focus, .select:focus {
+  border-color: #D2691E;
+  box-shadow: 0 0 0 3px rgba(210, 105, 30, 0.1);
+}
+
+/* ── Buttons ────────────────────────────────────────────── */
+.btnPrimary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px;
+  border-radius: 9px;
+  border: none;
+  background: #D2691E;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(210, 105, 30, 0.25);
+}
+.btnPrimary:hover:not(:disabled) { background: #B95C0A; transform: translateY(-1px); }
+.btnPrimary:disabled { opacity: 0.6; cursor: not-allowed; }
+.btnGhost {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.83rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btnGhost:hover { border-color: rgba(210,105,30,0.3); color: #B95C0A; background: rgba(210,105,30,0.03); }
+.btnSpinner {
+  display: inline-block;
+  width: 14px; height: 14px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Success Screen ─────────────────────────────────────── */
+.successScreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 0;
+  text-align: center;
+}
+.successIcon {
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  background: rgba(210, 105, 30, 0.1);
+  border: 2px solid rgba(210, 105, 30, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #D2691E;
+}
+.successTitle { font-size: 1.1rem; font-weight: 800; color: var(--text-primary); }
+.successDesc { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.6; }
+.successDesc strong { color: var(--text-primary); }
+
+/* ── Footer ─────────────────────────────────────────────── */
+.footer { border-top: 1px solid var(--border); padding-top: 16px; }
+.backBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s;
+}
+.backBtn:hover { color: var(--text-primary); }

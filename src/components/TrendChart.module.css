@@ -1,0 +1,16 @@
+.card { display: flex; flex-direction: column; gap: 16px; }
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+.sub { font-size: 0.72rem; color: var(--text-muted); }
+.link { color: var(--brand); }
+.link:hover { opacity: 0.75; }
