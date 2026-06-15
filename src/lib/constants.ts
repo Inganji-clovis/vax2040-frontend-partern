@@ -16,7 +16,7 @@ export const COUNTRY_COLORS: Record<string, string> = {
 export const VAX2040_TARGET = 60; // % local production by 2040
 export const VAX2040_YEAR = 2040;
 
-export const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+export const API_BASE = process.env.NEXT_PUBLIC_API_URL;
 
 export const TRUST_SCORE_LABELS: Record<number, string> = {
   1: 'Very Low',
