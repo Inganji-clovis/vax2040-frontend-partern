@@ -230,14 +230,8 @@ export default function PublicPage() {
                 </p>
 
                 <div className={styles.heroActions}>
-                  <a href="/dashboard" className={styles.heroBtnPrimary} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-                    Explore Dashboard <IconArrow />
-                  </a>
-                  <a href="/countries" className={styles.heroBtnSecondary} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-                    View Countries
-                  </a>
-                  <a href="/methodology" className={styles.heroBtnSecondary} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-                    Read Methodology
+                  <a href="#the-data" className={styles.heroBtnPrimary} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                    View Countries <IconArrow />
                   </a>
                 </div>
               </div>

@@ -13,14 +13,10 @@ interface Props {
 }
 
 const PARTNER_ORGS = [
-  'Rwanda Ministry of Health',
-  'Institut Pasteur de Dakar',
-  'Aspen Pharmacare SA',
-  'Macleods Pharmaceuticals',
-  'BioNTech Rwanda',
-  'Kenya MoH Partner',
-  'SA Stats Dept',
-  'Senegal Health Agency',
+  'Manufacturer',
+  'Regulator (NRA)',
+  'Central Medical Supply',
+  'Evidence Submission (Research/Analyst)',
 ];
 
 // SVG Icons

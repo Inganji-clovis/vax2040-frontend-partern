@@ -674,3 +674,127 @@
     padding: 24px;
   }
 }
+
+/* Dynamic Forms Styling Utilities */
+.checkboxGroup {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  background: #f8fafc;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(15, 23, 42, 0.05);
+}
+
+.checkboxItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.88rem;
+  color: #334155;
+  cursor: pointer;
+}
+
+.radioGroup {
+  display: flex;
+  gap: 20px;
+  background: #f8fafc;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(15, 23, 42, 0.05);
+  width: fit-content;
+}
+
+.radioItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.88rem;
+  color: #334155;
+  cursor: pointer;
+}
+
+.formSubtitle {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #475569;
+  margin: 16px 0 8px 0;
+  border-left: 3.5px solid #1e88e5;
+  padding-left: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.dataPointsTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+}
+
+.dataPointsTable th {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  padding: 10px 8px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+}
+
+.dataPointsTable td {
+  padding: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.dataPointInput {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1.5px solid rgba(15,23,42,0.08);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  outline: none;
+  background: #ffffff;
+  transition: all 0.2s;
+}
+
+.dataPointInput:focus {
+  border-color: #1e88e5;
+}
+
+.addDataPointBtn {
+  margin-top: 12px;
+  padding: 8px 16px;
+  background: #f1f5f9;
+  border: 1px solid rgba(15,23,42,0.08);
+  border-radius: 6px;
+  color: #475569;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.addDataPointBtn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.removeRowBtn {
+  background: transparent;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.removeRowBtn:hover {
+  color: #b91c1c;
+}
+
