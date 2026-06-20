@@ -65,7 +65,12 @@ export default function PublicPage() {
   useEffect(() => {
     setIsMounted(true);
     const stored = localStorage.getItem('vax2040_partner_user');
-    if (stored) { try { setPartnerUser(JSON.parse(stored)); } catch {} }
+    if (stored) {
+      try {
+        setPartnerUser(JSON.parse(stored));
+        setActiveTab('entry');
+      } catch {}
+    }
   }, []);
 
   useEffect(() => { if (isMounted) refreshData(); }, [partnerUser, isMounted]);
