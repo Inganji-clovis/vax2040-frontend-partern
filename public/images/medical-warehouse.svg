@@ -1,13 +1,27 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200">
-  <rect width="400" height="200" fill="#f0f9ff"/>
-  <g fill="none" stroke="#1e88e5" stroke-width="2">
-    <rect x="50" y="40" width="300" height="120" rx="5" fill="#dbeafe"/>
-    <rect x="70" y="60" width="80" height="80" rx="2" fill="white"/>
-    <rect x="160" y="60" width="80" height="80" rx="2" fill="white"/>
-    <rect x="250" y="60" width="80" height="80" rx="2" fill="white"/>
-    <rect x="80" y="70" width="20" height="30" fill="#1e88e5"/>
-    <rect x="110" y="70" width="20" height="30" fill="#1e88e5"/>
-    <rect x="170" y="70" width="20" height="30" fill="#1e88e5"/>
-    <rect x="200" y="70" width="20" height="30" fill="#1e88e5"/>
+  <rect width="400" height="200" fill="#e6f3ff" />
+  <g>
+    <rect x="40" y="40" width="320" height="120" rx="10" fill="#dbeafe" stroke="#1e88e5" stroke-width="3" />
+    <g transform="translate(60, 60)">
+      <rect x="0" y="0" width="80" height="80" rx="5" fill="#ffffff" stroke="#1e88e5" stroke-width="2" />
+      <rect x="10" y="10" width="20" height="20" rx="3" fill="#1e88e5" />
+      <rect x="40" y="10" width="20" height="20" rx="3" fill="#1e88e5" />
+      <rect x="10" y="40" width="20" height="20" rx="3" fill="#93c5fd" />
+      <rect x="40" y="40" width="20" height="20" rx="3" fill="#93c5fd" />
+    </g>
+    <g transform="translate(160, 60)">
+      <rect x="0" y="0" width="80" height="80" rx="5" fill="#ffffff" stroke="#1e88e5" stroke-width="2" />
+      <rect x="10" y="10" width="20" height="20" rx="3" fill="#1e88e5" />
+      <rect x="40" y="10" width="20" height="20" rx="3" fill="#1e88e5" />
+      <rect x="10" y="40" width="20" height="20" rx="3" fill="#93c5fd" />
+      <rect x="40" y="40" width="20" height="20" rx="3" fill="#93c5fd" />
+    </g>
+    <g transform="translate(260, 60)">
+      <rect x="0" y="0" width="80" height="80" rx="5" fill="#ffffff" stroke="#1e88e5" stroke-width="2" />
+      <rect x="10" y="10" width="20" height="20" rx="3" fill="#1e88e5" />
+      <rect x="40" y="10" width="20" height="20" rx="3" fill="#1e88e5" />
+      <rect x="10" y="40" width="20" height="20" rx="3" fill="#93c5fd" />
+      <rect x="40" y="40" width="20" height="20" rx="3" fill="#93c5fd" />
+    </g>
   </g>
 </svg>
