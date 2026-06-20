@@ -36,11 +36,25 @@
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 500'%3E%3Cg fill='none' stroke='%231e88e5' stroke-width='1'%3E%3C!-- World map simplified --%3E%3Cpath d='M100,80 Q150,70 200,90 L220,120 Q250,150 280,140 L300,110 Q320,90 350,100 L370,130 Q390,170 370,200 L350,240 Q330,270 350,300 L370,340 Q390,370 370,400 L340,420 Q310,430 290,400 L270,370 Q250,340 230,320 L210,280 Q190,240 210,200 L230,160 Q220,130 190,120 L160,100 Q130,90 100,80 Z' fill='rgba(30,136,229,0.02)'/%3E%3Cpath d='M450,60 Q500,50 550,70 L570,110 Q600,140 580,170 L550,200 Q520,220 500,200 L470,170 Q450,140 470,110 Z' fill='rgba(30,136,229,0.02)'/%3E%3Cpath d='M650,80 Q700,70 750,90 L770,130 Q800,170 780,210 L750,250 Q720,280 700,260 L680,220 Q660,180 680,150 L700,120 Q690,100 660,90 Z' fill='rgba(30,136,229,0.02)'/%3E%3C!-- Africa highlighted --%3E%3Cpath d='M480,120 Q530,110 560,140 L575,180 Q585,220 570,260 L555,300 Q540,340 560,370 L570,410 Q560,440 530,450 L500,460 Q470,455 450,430 L435,390 Q420,350 435,310 L450,270 Q435,230 440,190 L455,150 Q450,130 480,120 Z' fill='rgba(30,136,229,0.06)' stroke='rgba(30,136,229,0.12)' stroke-width='2'/%3E%3C/g%3E%3C/svg%3E");
+  background-image: url("/images/world-map.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  opacity: 0.4;
+  opacity: 0.15; /* Very low visibility as requested */
+  filter: grayscale(100%) brightness(1.2); /* Make it white and subtle */
+}
+
+/* Let's also add a subtle Africa highlight on top of the world map */
+.root::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 500'%3E%3Cpath d='M480,120 Q530,110 560,140 L575,180 Q585,220 570,260 L555,300 Q540,340 560,370 L570,410 Q560,440 530,450 L500,460 Q470,455 450,430 L435,390 Q420,350 435,310 L450,270 Q435,230 440,190 L455,150 Q450,130 480,120 Z' fill='rgba(30,136,229,0.04)' stroke='rgba(30,136,229,0.15)' stroke-width='2'/%3E%3C/svg%3E");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 /* ── NAVBAR ──────────────────────────────────────────────── */
