@@ -878,3 +878,214 @@
   .footerColSubscribe { grid-column: span 1; }
   .footerLegalLinks { flex-direction: column; gap: 12px; align-items: flex-start; }
 }
+
+/* ── NEW SECTION STYLES (Alternating, Global Rules) ──────── */
+.alternating-section {
+  width: 100%;
+  padding: 96px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.alternating-section-bg-light {
+  background-color: #F5F7FA;
+}
+
+.alternating-section-bg-white {
+  background-color: #FFFFFF;
+}
+
+.alternating-section-bg-dark {
+  background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+  color: #FFFFFF;
+}
+
+.alternating-section-content {
+  max-width: 1280px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: center;
+}
+
+.alternating-section-text {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.alternating-section-eyebrow {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #1E88E5;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.alternating-section-bg-dark .alternating-section-eyebrow {
+  color: #60A5FA;
+}
+
+.alternating-section-title {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: #0F172A;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.alternating-section-bg-dark .alternating-section-title {
+  color: #FFFFFF;
+}
+
+.alternating-section-body {
+  font-size: 0.95rem;
+  color: #64748B;
+  line-height: 1.7;
+}
+
+.alternating-section-bg-dark .alternating-section-body {
+  color: #CBD5E1;
+}
+
+.alternating-section-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.alternating-section-stat-item {
+  background: rgba(30, 136, 229, 0.06);
+  padding: 16px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.alternating-section-bg-dark .alternating-section-stat-item {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.alternating-section-stat-value {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #1E88E5;
+  display: block;
+}
+
+.alternating-section-bg-dark .alternating-section-stat-value {
+  color: #93C5FD;
+}
+
+.alternating-section-stat-label {
+  font-size: 0.8rem;
+  color: #64748B;
+  display: block;
+  margin-top: 4px;
+}
+
+.alternating-section-bg-dark .alternating-section-stat-label {
+  color: #94A3B8;
+}
+
+.alternating-section-image-side {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.alternating-section-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  inset: 0;
+}
+
+.alternating-section-cta-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  background: linear-gradient(135deg, #1E88E5 0%, #1565C0 100%);
+  color: #FFFFFF;
+  border: none;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-decoration: none;
+  width: fit-content;
+  box-shadow: 0 4px 16px rgba(30, 136, 229, 0.35);
+}
+
+.alternating-section-cta-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(30, 136, 229, 0.5);
+}
+
+.alternating-section-cta-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  background: rgba(255,255,255,0.15);
+  color: #FFFFFF;
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-decoration: none;
+  width: fit-content;
+}
+
+.alternating-section-cta-secondary:hover {
+  background: rgba(255,255,255,0.25);
+}
+
+.alternating-section-cta-group {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+/* Responsive for alternating sections */
+@media (max-width: 900px) {
+  .alternating-section {
+    padding: 64px 24px;
+  }
+  
+  .alternating-section-content {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  
+  .alternating-section-image-side {
+    order: -1;
+    min-height: 300px;
+  }
+  
+  .alternating-section-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .alternating-section-title {
+    font-size: 1.75rem;
+  }
+  
+  .alternating-section-stats {
+    grid-template-columns: 1fr;
+  }
+}

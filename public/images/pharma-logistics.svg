@@ -1,11 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200">
-  <rect width="400" height="200" fill="#f0f9ff"/>
-  <g fill="none" stroke="#1e88e5" stroke-width="2">
-    <rect x="50" y="70" width="100" height="60" rx="5" fill="#dbeafe"/>
-    <rect x="250" y="70" width="100" height="60" rx="5" fill="#dbeafe"/>
-    <path d="M150 100 L250 100" stroke-dasharray="5,3"/>
-    <polygon points="240,90 250,100 240,110" fill="#1e88e5"/>
-    <rect x="70" y="90" width="20" height="20" rx="2" fill="#1e88e5"/>
-    <rect x="280" y="90" width="20" height="20" rx="2" fill="#1e88e5"/>
+  <rect width="400" height="200" fill="#e6f3ff" />
+  <g fill="#1e88e5">
+    <rect x="30" y="60" width="120" height="80" rx="8" fill="#dbeafe" stroke="#1e88e5" stroke-width="3" />
+    <rect x="250" y="60" width="120" height="80" rx="8" fill="#dbeafe" stroke="#1e88e5" stroke-width="3" />
+    <g transform="translate(60, 90)">
+      <rect x="0" y="0" width="60" height="30" rx="5" fill="#1e88e5" />
+      <circle cx="15" cy="15" r="8" fill="#ffffff" />
+      <rect x="40" y="8" width="12" height="12" rx="2" fill="#ffffff" />
+    </g>
+    <g transform="translate(280, 90)">
+      <rect x="0" y="0" width="60" height="30" rx="5" fill="#1e88e5" />
+      <circle cx="15" cy="15" r="8" fill="#ffffff" />
+      <rect x="40" y="8" width="12" height="12" rx="2" fill="#ffffff" />
+    </g>
+    <g transform="translate(160, 95)">
+      <rect x="0" y="0" width="80" height="10" rx="4" fill="#1e88e5" />
+      <polygon points="70, -5" fill="#1e88e5" />
+      <polygon points="70, -15, 85, -5, 70, 5" fill="#1e88e5" />
+    </g>
   </g>
 </svg>
