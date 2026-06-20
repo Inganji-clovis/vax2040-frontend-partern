@@ -118,7 +118,7 @@ export default function AuthPage() {
         <div className={styles.rightContent}>
           {/* Back to Home */}
           <Link href="/" className={styles.backLink}>
-            <IconArrowLeft /> Back to Dashboard
+            <IconArrowLeft /> Back to Home
           </Link>
 
           {/* Mode Switcher */}
