@@ -111,7 +111,7 @@ export default function LoginView({ onLoginSuccess, onCancel }: Props) {
       <div className={`${styles.card} animate-fade-up`}>
         {/* Header */}
         <div className={styles.header}>
-          <img src="/logoA.png" alt="VAX2040" className={styles.logo} />
+          <img src="/logoA.png" alt="VAX2040 Logo" className={styles.logo} />
           <span className={styles.modeBadge}>
             {mode === 'signin' ? 'Partner Sign In' : 'Request Access'}
           </span>
