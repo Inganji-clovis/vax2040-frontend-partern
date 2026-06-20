@@ -230,14 +230,9 @@ export default function PublicPage() {
                 <button className={styles.navSignOut} onClick={handleLogout} title="Sign out"><IconLogOut /></button>
               </div>
             ) : (
-              <>
-                <a href="/donate" className={styles.navCTA} style={{ padding: '12px 20px', textDecoration: 'none' }}>
-                  Donate
-                </a>
-                <button className={styles.navSignIn} onClick={() => setShowLogin(true)} title="Sign In" aria-label="Sign In">
-                  <IconUser />
-                </button>
-              </>
+              <button className={styles.navSignIn} onClick={() => setShowLogin(true)} title="Sign In" aria-label="Sign In">
+                <IconUser />
+              </button>
             )}
           </div>
         </div>
@@ -272,9 +267,6 @@ export default function PublicPage() {
                   </a>
                   <a href="/countries" className={styles.heroBtnSecondary} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
                     View Countries
-                  </a>
-                  <a href="/donate" className={styles.heroBtnSecondary} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-                    Support VAX2040
                   </a>
                   <a href="/methodology" className={styles.heroBtnSecondary} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
                     Read Methodology
@@ -831,16 +823,9 @@ export default function PublicPage() {
             <section className={styles.section}>
               <span className={styles.eyebrow}>Support</span>
               <h2 className={styles.sectionTitle}>Support the VAX2040 Mission</h2>
-              <p className={styles.sectionSub}>Support VAX2040 through structured data donation, evidence submission, institutional partnership, or future financial support.</p>
+              <p className={styles.sectionSub}>Support VAX2040 through evidence submission and institutional partnership.</p>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '24px', marginTop: '32px' }}>
                 {[
-                  {
-                    title: 'Donate Data',
-                    desc: 'Submit structured manufacturing, regulatory, or supply chain data to improve our intelligence.',
-                    href: '/donate/data',
-                    image: '/images/pharma-logistics.svg',
-                    alt: 'Data collection and analysis'
-                  },
                   {
                     title: 'Submit Evidence',
                     desc: 'Share research publications, official reports, or verified institutional intelligence.',
@@ -854,13 +839,6 @@ export default function PublicPage() {
                     href: '/partner-access',
                     image: '/images/pharma-logistics.svg',
                     alt: 'Institutional strategic partnership'
-                  },
-                  {
-                    title: 'Financial Support',
-                    desc: 'Contribute to the sustainability and growth of the VAX2040 platform.',
-                    href: '/donate/financial-support',
-                    image: '/images/regulatory-review.svg',
-                    alt: 'Financial support and planning'
                   }
                 ].map((item, idx) => (
                   <a key={idx} href={item.href} style={{ textDecoration: 'none' }}>
@@ -889,7 +867,6 @@ export default function PublicPage() {
                 <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
                   <a href="/dashboard" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '12px 22px', background: 'white', color: '#1565c0', borderRadius: '10px', textDecoration: 'none', fontSize: '0.88rem', fontWeight: 700 }}>Explore Dashboard <IconArrow /></a>
                   <a href="/countries" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '12px 22px', background: 'rgba(255,255,255,0.12)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '10px', textDecoration: 'none', fontSize: '0.88rem', fontWeight: 700 }}>View Countries</a>
-                  <a href="/donate/data" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '12px 22px', background: 'rgba(255,255,255,0.12)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '10px', textDecoration: 'none', fontSize: '0.88rem', fontWeight: 700 }}>Donate Data</a>
                   <a href="/contact" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '12px 22px', background: 'rgba(255,255,255,0.12)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '10px', textDecoration: 'none', fontSize: '0.88rem', fontWeight: 700 }}>Contact Us</a>
                 </div>
               </div>
