@@ -51,6 +51,7 @@ export default function AuthPage() {
   const [mode, setMode] = useState<'signin' | 'register'>('signin');
   const [email, setEmail] = useState('');
   const [org, setOrg] = useState(PARTNER_ORGS[0]);
+  const [regOrgType, setRegOrgType] = useState(PARTNER_ORGS[0]);
   const [regName, setRegName] = useState('');
   const [regEmail, setRegEmail] = useState('');
   const [regOrg, setRegOrg] = useState('');
@@ -95,6 +96,7 @@ export default function AuthPage() {
     setError('');
     setEmail(''); setMagicCode('');
     setRegName(''); setRegEmail(''); setRegOrg(''); setRegReg('');
+    setRegOrgType(PARTNER_ORGS[0]);
   }
 
   return (
@@ -203,6 +205,12 @@ export default function AuthPage() {
                 <label className={styles.label}><IconBuilding /> Organisation Name <span className={styles.required}>*</span></label>
                 <input type="text" placeholder="Rwanda FDA / BioNTech Kigali" className={styles.input}
                   value={regOrg} onChange={(e) => setRegOrg(e.target.value)} required />
+              </div>
+              <div className={styles.field}>
+                <label className={styles.label}><IconBuilding /> Choose Organisation Type <span className={styles.required}>*</span></label>
+                <select className={styles.select} value={regOrgType} onChange={(e) => setRegOrgType(e.target.value)}>
+                  {PARTNER_ORGS.map((o) => <option key={o} value={o}>{o}</option>)}
+                </select>
               </div>
               <div className={styles.field}>
                 <label className={styles.label}><IconKey /> Registration Number <span className={styles.optional}>(optional)</span></label>
