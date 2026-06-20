@@ -494,10 +494,6 @@ export default function PublicPage() {
           <div style={{ maxWidth: 1180, margin: '0 auto', padding: '40px 24px' }}>
             <DataEntryView
               partnerUser={partnerUser}
-              manualEntries={manualEntries}
-              onAddEntries={handleAddEntries}
-              onUpdateEntry={handleUpdateEntry}
-              onDeleteEntry={handleDeleteEntry}
               existingCount={manualEntries.length}
             />
           </div>

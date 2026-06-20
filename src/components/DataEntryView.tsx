@@ -1,890 +1,543 @@
 'use client';
 import { useState, useEffect } from 'react';
 import styles from './DataEntryView.module.css';
-import { ManualEntry } from '../lib/types';
-import { COUNTRIES } from '../lib/constants';
 import { PartnerUser } from './LoginView';
 import {
-  ClipboardEdit, Search, ListFilter, Folder, Hourglass, CheckCircle2,
-  XCircle, Edit3, Trash2, Syringe, Pill, FileText
+  FileText, CheckCircle2, AlertCircle, Trash2, Edit3, Plus, X, Upload, ArrowLeft, ClipboardList
 } from 'lucide-react';
 
 interface Props {
   partnerUser: PartnerUser | null;
-  manualEntries: ManualEntry[];
-  onAddEntries: (entries: Omit<ManualEntry, 'id' | 'timestamp'>[]) => void;
-  onUpdateEntry: (entry: ManualEntry) => void;
-  onDeleteEntry: (id: string) => void;
   existingCount: number;
 }
 
-const INDICATORS = [
-  { code: 'VAX.IMPR.VACC.CD', name: 'Vaccine Imports (USD)' },
-  { code: 'VAX.PROD.VACC.CD', name: 'Vaccine Local Production (USD)' },
-  { code: 'VAX.IMPR.MEDI.CD', name: 'Medicine Imports (USD)' },
-  { code: 'VAX.PROD.MEDI.CD', name: 'Medicine Local Production (USD)' },
-  { code: 'SH.XPD.CHEX.GD.ZS', name: 'Health Expenditure (% of GDP)' },
-  { code: 'SH.XPD.CHEX.PC.CD', name: 'Health Expenditure per Capita (USD)' },
-  { code: 'SH.XPD.GHED.GD.ZS', name: 'Gov. Health Expenditure (% of GDP)' },
-  { code: 'SP.POP.TOTL', name: 'Population, total' },
+export interface PartnerSubmission {
+  id: string;
+  partnerId: string;
+  partnerName: string;
+  reportingYear: string;
+  reportingMonth: string;
+  vaccineValue: number;
+  medicineValue: number;
+  status: 'draft' | 'published' | 'rejected';
+  trustScore: number;
+  createdAt: string;
+  evidenceUrl?: string;
+  notes?: string;
+}
+
+const MONTHS = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
 ];
 
-const CSV_TEMPLATE = `countryCode,year,indicatorCode,value,enteredBy,productType,metricUnit,facility,status
-RWA,2022,VAX.PROD.VACC.CD,1105160,Rwanda Ministry of Health,vaccine,usd,BioNTech Kigali Hub,approved
-KEN,2022,VAX.IMPR.MEDI.CD,412500000,Kenya Local Partner,medicine,usd,Nairobi Depot,submitted
-ZAF,2022,VAX.PROD.VACC.CD,58000000,SA Stats Dept,vaccine,usd,Aspen Gqeberha,approved
-SEN,2022,VAX.IMPR.MEDI.CD,182400000,Senegal Health Agency,medicine,usd,Pasteur Dakar B,draft`;
+const MOCK_SUBMISSIONS: PartnerSubmission[] = [
+  {
+    id: 'sub_1',
+    partnerId: 'reporter@biontech.rw',
+    partnerName: 'BioNTech Rwanda',
+    reportingYear: '2023',
+    reportingMonth: 'November',
+    vaccineValue: 12500000,
+    medicineValue: 0,
+    status: 'published',
+    trustScore: 5,
+    createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+    evidenceUrl: 'biontech_prod_report_2023.pdf',
+    notes: 'Ex-factory values audited by Ernst & Young.'
+  },
+  {
+    id: 'sub_2',
+    partnerId: 'reporter@biontech.rw',
+    partnerName: 'BioNTech Rwanda',
+    reportingYear: '2022',
+    reportingMonth: 'May',
+    vaccineValue: 8800000,
+    medicineValue: 0,
+    status: 'published',
+    trustScore: 5,
+    createdAt: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString(),
+    evidenceUrl: 'biontech_prod_report_2022.pdf'
+  },
+  {
+    id: 'sub_3',
+    partnerId: 'reporter@biontech.rw',
+    partnerName: 'BioNTech Rwanda',
+    reportingYear: '2024',
+    reportingMonth: 'June',
+    vaccineValue: 15200000,
+    medicineValue: 1200000,
+    status: 'draft',
+    trustScore: 5,
+    createdAt: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
+    notes: 'Initial Q1-Q3 figures entered manually. Auditing document pending.'
+  }
+];
 
-export default function DataEntryView({
-  partnerUser,
-  manualEntries,
-  onAddEntries,
-  onUpdateEntry,
-  onDeleteEntry,
-  existingCount,
-}: Props) {
-  // Form states
-  const [countryCode, setCountryCode] = useState('RWA');
-  const [indicatorCode, setIndicatorCode] = useState('VAX.PROD.VACC.CD');
-  const [year, setYear] = useState('2022');
-  const [value, setValue] = useState('');
-  const [enteredBy, setEnteredBy] = useState('');
-  
-  // Pharma specific states
-  const [productType, setProductType] = useState<'vaccine' | 'medicine'>('vaccine');
-  const [metricUnit, setMetricUnit] = useState<'percent' | 'usd' | 'doses'>('usd');
-  const [facility, setFacility] = useState('');
-  const [supportiveDocument, setSupportiveDocument] = useState('');
-  const [status, setStatus] = useState<'draft' | 'submitted' | 'approved' | 'rejected'>('draft');
+export default function DataEntryView({ partnerUser }: Props) {
+  const [submissions, setSubmissions] = useState<PartnerSubmission[]>([]);
+  const [viewMode, setViewMode] = useState<'list' | 'form'>('list');
+  const [editingSub, setEditingSub] = useState<PartnerSubmission | null>(null);
 
-  // Edit/Update mode state
-  const [editingId, setEditingId] = useState<string | null>(null);
+  // Form inputs
+  const [reportingYear, setReportingYear] = useState('2024');
+  const [reportingMonth, setReportingMonth] = useState('January');
+  const [vaccineValue, setVaccineValue] = useState('');
+  const [medicineValue, setMedicineValue] = useState('');
+  const [evidenceFile, setEvidenceFile] = useState<string>('');
+  const [notes, setNotes] = useState('');
 
-  // Search & Filters states
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filterCountry, setFilterCountry] = useState('all');
-  const [filterStatus, setFilterStatus] = useState('all');
+  const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
-  const [submissionMode, setSubmissionMode] = useState<'single' | 'bulk'>('single');
-
-  // CSV Import State
-  const [csvText, setCsvText] = useState('');
-  const [csvFileName, setCsvFileName] = useState('');
-  const [bulkDocument, setBulkDocument] = useState('');
-  const [importLog, setImportLog] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
-  const [previewEntries, setPreviewEntries] = useState<Omit<ManualEntry, 'id' | 'timestamp'>[]>([]);
-
-  // Sync state if partnerUser is logged in
+  // Load from local storage
   useEffect(() => {
-    if (partnerUser) {
-      setEnteredBy(partnerUser.org);
-      setStatus('submitted');
-    }
-  }, [partnerUser]);
-
-  // Populate form for editing
-  function handleEditClick(entry: ManualEntry) {
-    setEditingId(entry.id);
-    setCountryCode(entry.countryCode);
-    setIndicatorCode(entry.indicatorCode);
-    setYear(entry.year);
-    setValue(String(entry.value));
-    setEnteredBy(entry.enteredBy);
-    setProductType(entry.productType);
-    setMetricUnit(entry.metricUnit);
-    setFacility(entry.facility || '');
-    setSupportiveDocument(entry.supportiveDocument || '');
-    setStatus(entry.status);
-
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  // Cancel edit mode
-  function handleCancelEdit() {
-    setEditingId(null);
-    setValue('');
-    setEnteredBy(partnerUser ? partnerUser.org : '');
-    setFacility('');
-    setSupportiveDocument('');
-    setProductType('vaccine');
-    setMetricUnit('usd');
-    setStatus(partnerUser ? 'submitted' : 'draft');
-  }
-
-  // Form submission (Add or Update)
-  function handleFormSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!value || isNaN(Number(value))) {
-      alert('Please enter a valid numeric value.');
-      return;
-    }
-    const finalEnteredBy = partnerUser ? partnerUser.org : enteredBy.trim();
-    if (!finalEnteredBy) {
-      alert('Please enter the organization/source name.');
-      return;
-    }
-    if (!supportiveDocument) {
-      alert('Please upload a supportive document for verification.');
-      return;
-    }
-
-    if (editingId) {
-      const original = manualEntries.find((m) => m.id === editingId);
-      if (original) {
-        onUpdateEntry({
-          id: editingId,
-          countryCode,
-          year,
-          indicatorCode,
-          value: Number(value),
-          enteredBy: finalEnteredBy,
-          productType,
-          metricUnit,
-          facility: facility.trim() || undefined,
-          supportiveDocument: supportiveDocument.trim() || undefined,
-          status: partnerUser ? 'submitted' : status,
-          timestamp: original.timestamp,
-        });
-        setImportLog({ type: 'success', message: 'Override updated successfully!' });
-      }
-      setEditingId(null);
-    } else {
-      onAddEntries([
-        {
-          countryCode,
-          year,
-          indicatorCode,
-          value: Number(value),
-          enteredBy: finalEnteredBy,
-          productType,
-          metricUnit,
-          facility: facility.trim() || undefined,
-          supportiveDocument: supportiveDocument.trim() || undefined,
-          status: partnerUser ? 'submitted' : status,
-        },
-      ]);
-      setImportLog({ type: 'success', message: 'Manual override registered successfully!' });
-    }
-
-    setValue('');
-    setEnteredBy(partnerUser ? partnerUser.org : '');
-    setFacility('');
-    setSupportiveDocument('');
-    setProductType('vaccine');
-    setMetricUnit('usd');
-    setStatus(partnerUser ? 'submitted' : 'draft');
-  }
-
-  // Bulk CSV loader
-  function handleLoadTemplate() {
-    setCsvText(CSV_TEMPLATE);
-    setCsvFileName('vax2040_template.csv');
-    setBulkDocument('sample_evidence.pdf');
-    setImportLog({ type: 'success', message: 'Sample CSV template and mock document loaded! Click "Preview Extracted Data" to view.' });
-  }
-
-  function handleCsvFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        setImportLog({ type: 'error', message: 'File is too large. Max size is 5MB.' });
-        return;
-      }
-      setCsvFileName(file.name);
-      const reader = new FileReader();
-      reader.onload = (evt) => {
-        setCsvText(evt.target?.result as string);
-        setImportLog({ type: 'success', message: `Parsed ${file.name} successfully.` });
-      };
-      reader.readAsText(file);
-    }
-  }
-
-  // Bulk CSV Processor to generate preview
-  function handlePreviewCsv() {
-    if (!bulkDocument) {
-      setImportLog({ type: 'error', message: 'Supportive document is required for bulk imports.' });
-      return;
-    }
-    if (!csvText.trim()) {
-      setImportLog({ type: 'error', message: 'CSV text area is empty or file not loaded.' });
-      return;
-    }
-
-    const lines = csvText.split('\n').map((l) => l.trim()).filter(Boolean);
-    if (lines.length < 2) {
-      setImportLog({ type: 'error', message: 'CSV requires a header row and at least one data row.' });
-      return;
-    }
-
-    const header = lines[0].toLowerCase();
-    const expectedHeaders = ['countrycode', 'year', 'indicatorcode', 'value', 'enteredby'];
-    const headersMatch = expectedHeaders.every((h) => header.includes(h));
-
-    if (!headersMatch) {
-      setImportLog({
-        type: 'error',
-        message: 'Invalid headers. Expected: countryCode, year, indicatorCode, value, enteredBy',
-      });
-      return;
-    }
-
-    const newEntries: Omit<ManualEntry, 'id' | 'timestamp'>[] = [];
-    let lineErrors = 0;
-
-    for (let i = 1; i < lines.length; i++) {
-      const parts = lines[i].split(',').map((p) => p.trim());
-      if (parts.length < 5) {
-        lineErrors++;
-        continue;
-      }
-
-      const [cCode, yr, indCode, valStr, source, prodType, unitType, plant, stat] = parts;
-      
-      const validCountry = COUNTRIES.some((c) => c.code === cCode.toUpperCase());
-      const validInd = INDICATORS.some((ind) => ind.code === indCode);
-      const validYear = !isNaN(Number(yr)) && Number(yr) >= 2010 && Number(yr) <= 2060;
-      const validVal = !isNaN(Number(valStr));
-
-      if (validCountry && validInd && validYear && validVal && (partnerUser || source)) {
-        const safeProductType = (prodType === 'vaccine' || prodType === 'medicine') ? prodType : 'vaccine';
-        const safeUnit = (unitType === 'percent' || unitType === 'usd' || unitType === 'doses') ? unitType : 'percent';
-        const safeStatus = (stat === 'draft' || stat === 'submitted' || stat === 'approved' || stat === 'rejected') ? stat : 'draft';
-
-        newEntries.push({
-          countryCode: cCode.toUpperCase(),
-          year: yr,
-          indicatorCode: indCode,
-          value: Number(valStr),
-          enteredBy: partnerUser ? partnerUser.org : source,
-          productType: safeProductType,
-          metricUnit: safeUnit,
-          facility: plant || undefined,
-          supportiveDocument: bulkDocument,
-          status: partnerUser ? 'submitted' : safeStatus,
-        });
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('vax2040_partner_submissions');
+      if (stored) {
+        try {
+          setSubmissions(JSON.parse(stored));
+        } catch {
+          setSubmissions(MOCK_SUBMISSIONS);
+        }
       } else {
-        lineErrors++;
+        setSubmissions(MOCK_SUBMISSIONS);
+        localStorage.setItem('vax2040_partner_submissions', JSON.stringify(MOCK_SUBMISSIONS));
       }
     }
+  }, []);
 
-    if (newEntries.length > 0) {
-      setPreviewEntries(newEntries);
-      setImportLog({
-        type: 'success',
-        message: `Successfully parsed ${newEntries.length} bulk records. Please review and edit below.${
-          lineErrors > 0 ? ` Skipped ${lineErrors} lines due to syntax errors.` : ''
-        }`,
+  if (!partnerUser) {
+    return (
+      <div className={styles.unauthorized}>
+        <AlertCircle size={48} className={styles.unauthIcon} />
+        <h2>Authentication Required</h2>
+        <p>You must be signed in as a verified pharmaceutical manufacturer or partner organization to access the workspace feeds.</p>
+        <a href="/auth" className={styles.unauthBtn}>Sign In to Account</a>
+      </div>
+    );
+  }
+
+  const handleSaveSubmission = (e: React.FormEvent, asDraft: boolean) => {
+    e.preventDefault();
+    if (isNaN(Number(vaccineValue)) || Number(vaccineValue) < 0) {
+      setNotification({ type: 'error', message: 'Please enter a valid Vaccine Production Value.' });
+      return;
+    }
+    if (isNaN(Number(medicineValue)) || Number(medicineValue) < 0) {
+      setNotification({ type: 'error', message: 'Please enter a valid Medicine Production Value.' });
+      return;
+    }
+
+    const currentYear = reportingYear;
+    const currentMonth = reportingMonth;
+    const isDuplicate = submissions.some(
+      s => s.reportingYear === currentYear && 
+      s.reportingMonth === currentMonth &&
+      s.partnerId === partnerUser.email && 
+      (!editingSub || s.id !== editingSub.id)
+    );
+
+    if (isDuplicate) {
+      setNotification({ type: 'error', message: `A submission for the period ${currentMonth} ${currentYear} already exists.` });
+      return;
+    }
+
+    let updatedList: PartnerSubmission[] = [];
+
+    if (editingSub) {
+      // Update existing
+      updatedList = submissions.map(s => {
+        if (s.id === editingSub.id) {
+          return {
+            ...s,
+            reportingYear,
+            reportingMonth,
+            vaccineValue: Number(vaccineValue),
+            medicineValue: Number(medicineValue),
+            evidenceUrl: evidenceFile || s.evidenceUrl,
+            notes,
+            status: asDraft ? 'draft' : 'published',
+            createdAt: new Date().toISOString()
+          };
+        }
+        return s;
       });
+      setNotification({ type: 'success', message: 'Submission updated successfully.' });
     } else {
-      setImportLog({
-        type: 'error',
-        message: 'Failed to import. Ensure format matches the template exactly.',
-      });
+      // Add new
+      const newSub: PartnerSubmission = {
+        id: 'sub_' + Math.random().toString(36).substr(2, 9),
+        partnerId: partnerUser.email,
+        partnerName: partnerUser.org,
+        reportingYear,
+        reportingMonth,
+        vaccineValue: Number(vaccineValue),
+        medicineValue: Number(medicineValue),
+        status: asDraft ? 'draft' : 'published',
+        trustScore: 5,
+        createdAt: new Date().toISOString(),
+        evidenceUrl: evidenceFile || undefined,
+        notes: notes || undefined
+      };
+      updatedList = [newSub, ...submissions];
+      setNotification({ type: 'success', message: 'Production data submitted successfully.' });
     }
-  }
 
-  function handlePreviewEdit(index: number, field: keyof Omit<ManualEntry, 'id' | 'timestamp'>, value: any) {
-    const updated = [...previewEntries];
-    updated[index] = { ...updated[index], [field]: value };
-    setPreviewEntries(updated);
-  }
+    setSubmissions(updatedList);
+    localStorage.setItem('vax2040_partner_submissions', JSON.stringify(updatedList));
 
-  function handlePreviewRemove(index: number) {
-    setPreviewEntries(previewEntries.filter((_, i) => i !== index));
-    if (previewEntries.length === 1) {
-      setImportLog(null); // Cleared last one
+    // Clear form and go back to list
+    handleCancelForm();
+  };
+
+  const handleEditClick = (sub: PartnerSubmission) => {
+    if (sub.status !== 'draft') {
+      alert("Only draft submissions can be edited. Published or rejected data points require administration overrides.");
+      return;
     }
-  }
+    setEditingSub(sub);
+    setReportingYear(sub.reportingYear);
+    setReportingMonth(sub.reportingMonth);
+    setVaccineValue(String(sub.vaccineValue));
+    setMedicineValue(String(sub.medicineValue));
+    setEvidenceFile(sub.evidenceUrl || '');
+    setNotes(sub.notes || '');
+    setViewMode('form');
+  };
 
-  function handleSubmitPreview() {
-    onAddEntries(previewEntries);
-    setImportLog({ type: 'success', message: `Successfully registered ${previewEntries.length} bulk records.` });
-    setPreviewEntries([]);
-    setCsvText('');
-    setCsvFileName('');
-    setBulkDocument('');
-  }
-
-  // Filtering entries for the CRUD list
-  const filteredEntries = manualEntries.filter((entry) => {
-    if (partnerUser && entry.enteredBy.toLowerCase() !== partnerUser.org.toLowerCase()) {
-      return false;
+  const handleDeleteClick = (sub: PartnerSubmission) => {
+    if (sub.status !== 'draft') {
+      alert("Only draft submissions can be deleted.");
+      return;
     }
-    const matchesSearch =
-      entry.enteredBy.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (entry.facility || '').toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCountry = filterCountry === 'all' || entry.countryCode === filterCountry;
-    const matchesStatus = filterStatus === 'all' || entry.status === filterStatus;
-    return matchesSearch && matchesCountry && matchesStatus;
-  });
 
-  function getFlag(code: string) {
-    return COUNTRIES.find((c) => c.code === code)?.flag || '';
-  }
-
-  function getIndicatorLabel(code: string) {
-    return INDICATORS.find((i) => i.code === code)?.name || code;
-  }
-
-  function fmtTableVal(val: number, unit: string) {
-    if (unit === 'usd') {
-      return val >= 1_000_000 ? `$${(val / 1_000_000).toFixed(1)}M` : `$${val.toLocaleString()}`;
-    }
-    if (unit === 'percent') {
-      return `${val.toFixed(1)}%`;
-    }
-    return `${val.toLocaleString()} Doses`;
-  }
-
-  function isDeleteExpired(timestamp: string) {
-    if (!timestamp) return false;
-    const diffMs = new Date().getTime() - new Date(timestamp).getTime();
+    const elapsedMs = new Date().getTime() - new Date(sub.createdAt).getTime();
     const twoHoursMs = 2 * 60 * 60 * 1000;
-    return diffMs >= twoHoursMs;
-  }
+    if (elapsedMs >= twoHoursMs) {
+      alert("Deletion window has expired. Submissions can only be deleted within 2 hours of registration.");
+      return;
+    }
 
-  function getDeleteTitle(entry: ManualEntry) {
-    if (!entry.timestamp) return "Delete submission";
-    const diffMs = new Date().getTime() - new Date(entry.timestamp).getTime();
+    if (confirm("Are you sure you want to delete this submission draft?")) {
+      const updatedList = submissions.filter(s => s.id !== sub.id);
+      setSubmissions(updatedList);
+      localStorage.setItem('vax2040_partner_submissions', JSON.stringify(updatedList));
+      setNotification({ type: 'success', message: 'Draft deleted successfully.' });
+    }
+  };
+
+  const handleCancelForm = () => {
+    setEditingSub(null);
+    setReportingYear('2024');
+    setReportingMonth('January');
+    setVaccineValue('');
+    setMedicineValue('');
+    setEvidenceFile('');
+    setNotes('');
+    setViewMode('list');
+  };
+
+  const isDeleteExpired = (createdAt: string) => {
+    const elapsedMs = new Date().getTime() - new Date(createdAt).getTime();
     const twoHoursMs = 2 * 60 * 60 * 1000;
-    const remainingMs = twoHoursMs - diffMs;
+    return elapsedMs >= twoHoursMs;
+  };
+
+  const getDeleteTooltip = (sub: PartnerSubmission) => {
+    if (sub.status !== 'draft') return "Only draft submissions can be deleted";
+    const elapsedMs = new Date().getTime() - new Date(sub.createdAt).getTime();
+    const twoHoursMs = 2 * 60 * 60 * 1000;
+    const remainingMs = twoHoursMs - elapsedMs;
     if (remainingMs <= 0) return "Delete disabled (2-hour window expired)";
     const remainingMins = Math.ceil(remainingMs / (1000 * 60));
     if (remainingMins > 60) {
       const hours = Math.floor(remainingMins / 60);
       const mins = remainingMins % 60;
-      return `Delete submission (Allowed for another ${hours}h ${mins}m)`;
+      return `Delete draft (Allowed for another ${hours}h ${mins}m)`;
     }
-    return `Delete submission (Allowed for another ${remainingMins}m)`;
-  }
+    return `Delete draft (Allowed for another ${remainingMins}m)`;
+  };
+
+  const fmtVal = (val: number) => {
+    return `$${val.toLocaleString()}`;
+  };
+
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    });
+  };
+
+  const mySubmissions = submissions.filter(s => s.partnerId === partnerUser.email);
+  const totalVaccines = mySubmissions.reduce((sum, s) => sum + s.vaccineValue, 0);
+  const totalMedicines = mySubmissions.reduce((sum, s) => sum + s.medicineValue, 0);
 
   return (
     <div className={styles.container}>
+      {/* HEADER SECTION */}
       <div className={styles.header}>
         <div className={styles.titleArea}>
-          <span className="badge badge-warn" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-            <ClipboardEdit size={16} /> Manual Submissions
-          </span>
-          <h1 className={styles.title}>Partner Feeds Registry</h1>
+          <div className={styles.partnerNameLabel}>Logged in as: <strong>{partnerUser.org}</strong></div>
+          <h1 className={styles.title}>Production Feed Workspace</h1>
           <p className={styles.sub}>
-            Upload spreadsheets or submit factory production data directly. All records require curator audit logs verification.
+            Submit your local pharmaceutical production outputs. These values will be verified against UN Comtrade indices to compile national sovereign ratios.
           </p>
         </div>
-        <div className={styles.statCard}>
-          <span className={styles.statLabel}>Active Overrides</span>
-          <span className={styles.statValue}>{existingCount} Records</span>
-        </div>
+
+        {viewMode === 'list' && (
+          <button className={styles.submitNewBtn} onClick={() => setViewMode('form')}>
+            <Plus size={16} /> Submit New Production Data
+          </button>
+        )}
       </div>
 
-      {importLog && (
-        <div className={`${styles.alert} ${importLog.type === 'success' ? styles.alertSuccess : styles.alertError}`}>
-          {importLog.type === 'success' ? '✓' : '⚠️'} {importLog.message}
+      {notification && (
+        <div className={`${styles.alert} ${notification.type === 'success' ? styles.alertSuccess : styles.alertError}`}>
+          <AlertCircle size={16} />
+          <span>{notification.message}</span>
+          <button className={styles.alertClose} onClick={() => setNotification(null)}><X size={14} /></button>
         </div>
       )}
 
-      {/* Tabs to Switch Modes */}
-      <div className={styles.tabs}>
-        <button
-          className={`${styles.tabBtn} ${submissionMode === 'single' ? styles.tabBtnActive : ''}`}
-          onClick={() => setSubmissionMode('single')}
-        >
-          Single Entry Form
-        </button>
-        <button
-          className={`${styles.tabBtn} ${submissionMode === 'bulk' ? styles.tabBtnActive : ''}`}
-          onClick={() => setSubmissionMode('bulk')}
-        >
-          Bulk Import
-        </button>
-      </div>
-
-      <div className={styles.grid} style={{ gridTemplateColumns: '1fr', maxWidth: '800px', margin: '0 auto 40px 0' }}>
-        
-        {submissionMode === 'single' ? (
-        <div className={`card ${styles.card}`}>
-          <div className={styles.formHeader}>
-            <h2 className={styles.cardTitle}>{editingId ? 'Edit Data Override' : 'Single Entry Form'}</h2>
-            {editingId && (
-              <button className={styles.cancelEditBtn} onClick={handleCancelEdit}>
-                Cancel Edit Mode
-              </button>
-            )}
-          </div>
-
-          <form onSubmit={handleFormSubmit} className={styles.form}>
-            
-            <div className={styles.formRow}>
-              <div className={styles.formGroup}>
-                <label className={styles.label}>Focus Country</label>
-                <select
-                  className={styles.select}
-                  value={countryCode}
-                  onChange={(e) => setCountryCode(e.target.value)}
-                >
-                  {COUNTRIES.map((c) => (
-                    <option key={c.code} value={c.code}>
-                      {c.flag} {c.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className={styles.formGroup}>
-                <label className={styles.label}>Target Year</label>
-                <select
-                  className={styles.select}
-                  value={year}
-                  onChange={(e) => setYear(e.target.value)}
-                >
-                  {Array.from({ length: 15 }, (_, i) => String(2014 + i)).map((y) => (
-                    <option key={y} value={y}>
-                      {y}
-                    </option>
-                  ))}
-                </select>
-              </div>
+      {viewMode === 'list' ? (
+        <>
+          {/* STATS OVERVIEW CARDS */}
+          <div className={styles.statsRow}>
+            <div className={styles.statCard}>
+              <span className={styles.statLabel}>Submissions logged</span>
+              <span className={styles.statValue}>{mySubmissions.length} Reports</span>
             </div>
-
-            <div className={styles.formGroup}>
-              <label className={styles.label}>Target Indicator</label>
-              <select
-                className={styles.select}
-                value={indicatorCode}
-                onChange={(e) => setIndicatorCode(e.target.value)}
-              >
-                {INDICATORS.map((ind) => (
-                  <option key={ind.code} value={ind.code}>
-                    {ind.name}
-                  </option>
-                ))}
-              </select>
+            <div className={styles.statCard}>
+              <span className={styles.statLabel}>Total Vaccines Logged</span>
+              <span className={styles.statValue}>{fmtVal(totalVaccines)}</span>
             </div>
-
-            <div className={styles.formRow}>
-              <div className={styles.formGroup}>
-                <label className={styles.label}>Product Type</label>
-                <select
-                  className={styles.select}
-                  value={productType}
-                  onChange={(e) => setProductType(e.target.value as any)}
-                >
-                  <option value="vaccine">💉 Vaccine</option>
-                  <option value="medicine">💊 Medicine</option>
-                </select>
-              </div>
-
-              {!partnerUser && (
-                <div className={styles.formGroup}>
-                  <label className={styles.label}>Verification Status</label>
-                  <select
-                    className={styles.select}
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value as any)}
-                  >
-                    <option value="draft">📁 Draft (Internal)</option>
-                    <option value="submitted">⏳ Submitted (Partner)</option>
-                    <option value="approved">✅ Approved (VAX2040)</option>
-                  </select>
-                </div>
-              )}
+            <div className={styles.statCard}>
+              <span className={styles.statLabel}>Total Medicines Logged</span>
+              <span className={styles.statValue}>{fmtVal(totalMedicines)}</span>
             </div>
-
-            <div className={styles.formGroup}>
-              <label className={styles.label}>Measurement Unit</label>
-              <div className={styles.radioGroup}>
-                <label className={styles.radioLabel}>
-                  <input
-                    type="radio"
-                    name="unit"
-                    value="percent"
-                    checked={metricUnit === 'percent'}
-                    onChange={() => setMetricUnit('percent')}
-                  />
-                  <span>Percentage (%)</span>
-                </label>
-                <label className={styles.radioLabel}>
-                  <input
-                    type="radio"
-                    name="unit"
-                    value="usd"
-                    checked={metricUnit === 'usd'}
-                    onChange={() => setMetricUnit('usd')}
-                  />
-                  <span>Value (USD)</span>
-                </label>
-                <label className={styles.radioLabel}>
-                  <input
-                    type="radio"
-                    name="unit"
-                    value="doses"
-                    checked={metricUnit === 'doses'}
-                    onChange={() => setMetricUnit('doses')}
-                  />
-                  <span>Doses (Units)</span>
-                </label>
-              </div>
-            </div>
-
-            <div className={styles.formRow}>
-              <div className={styles.formGroup}>
-                <label className={styles.label}>Value</label>
-                <input
-                  type="text"
-                  placeholder="e.g. 15.5 or 55000000"
-                  className={styles.input}
-                  value={value}
-                  onChange={(e) => setValue(e.target.value)}
-                  required
-                />
-              </div>
-
-              <div className={styles.formGroup}>
-                <label className={styles.label}>Facility / Plant (Optional)</label>
-                <input
-                  type="text"
-                  placeholder="e.g. BioNTech Kigali"
-                  className={styles.input}
-                  value={facility}
-                  onChange={(e) => setFacility(e.target.value)}
-                />
-              </div>
-            </div>
-
-            <div className={styles.formGroup}>
-              <label className={styles.label}>Supportive Document (Required)</label>
-              <label className={styles.uploadZone}>
-                <input
-                  type="file"
-                  className={styles.uploadInput}
-                  onChange={(e) => setSupportiveDocument(e.target.files?.[0]?.name || '')}
-                />
-                <span className={styles.uploadIcon}><FileText size={32} strokeWidth={1.5} /></span>
-                <span className={styles.uploadText}>
-                  Click or drag file to upload PDF / Excel (Max 5MB)
-                </span>
-                {supportiveDocument && (
-                  <span className={styles.uploadSelected} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><CheckCircle2 size={14} /> {supportiveDocument}</span>
-                )}
-              </label>
-            </div>
-
-            {!partnerUser && (
-              <div className={styles.formGroup}>
-                <label className={styles.label}>Source / Entered By</label>
-                <input
-                  type="text"
-                  placeholder="e.g. VAX2040 Partner Team"
-                  className={styles.input}
-                  value={enteredBy}
-                  onChange={(e) => setEnteredBy(e.target.value)}
-                  required
-                />
-              </div>
-            )}
-
-            <button type="submit" className={styles.submitBtn}>
-              {editingId ? 'Update Data Point' : 'Register Override'}
-            </button>
-          </form>
-        </div>
-        ) : (
-        <div className={`card ${styles.card}`}>
-          <div className={styles.cardHeader}>
-            <div>
-              <h2 className={styles.cardTitle}>Excel / CSV Import Simulator</h2>
-              <p className={styles.cardDesc}>Upload bulk records matching VAX2040 schema.</p>
-            </div>
-            <button className={styles.templateBtn} onClick={handleLoadTemplate}>
-              Load Template
-            </button>
-          </div>
-
-          <div className={styles.formGroup} style={{ marginBottom: '20px' }}>
-            <label className={styles.label}>CSV / Excel Data File</label>
-            <label className={styles.uploadZone}>
-              <input
-                type="file"
-                accept=".csv, .xlsx, .xls"
-                className={styles.uploadInput}
-                onChange={handleCsvFileSelect}
-              />
-              <span className={styles.uploadIcon}><FileText size={32} strokeWidth={1.5} /></span>
-              <span className={styles.uploadText}>
-                Click to attach CSV or Excel Data (Max 5MB)
+            <div className={styles.statCard}>
+              <span className={styles.statLabel}>Manufacturer Trust Rating</span>
+              <span className={styles.statValue} style={{ color: '#00B087', display: 'flex', alignItems: 'center', gap: '6px', justifyContent: 'flex-end' }}>
+                5 / 5 <CheckCircle2 size={18} />
               </span>
-              {csvFileName && (
-                <span className={styles.uploadSelected} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><CheckCircle2 size={14} /> {csvFileName}</span>
-              )}
-            </label>
+            </div>
           </div>
 
-          <div className={styles.formGroup} style={{ marginBottom: '20px' }}>
-            <label className={styles.label}>Supportive Document for Bulk Data (Required)</label>
-            <label className={styles.uploadZone}>
-              <input
-                type="file"
-                className={styles.uploadInput}
-                onChange={(e) => setBulkDocument(e.target.files?.[0]?.name || '')}
-              />
-                <span className={styles.uploadIcon}><FileText size={32} strokeWidth={1.5} /></span>
-                <span className={styles.uploadText}>
-                  Click to attach master evidence document (PDF/Word, Max 10MB)
-                </span>
-              {bulkDocument && (
-                <span className={styles.uploadSelected}><CheckCircle2 size={14} /> {bulkDocument}</span>
-              )}
-            </label>
-          </div>
+          {/* TABLE LOG LIST */}
+          <div className={styles.managerSection}>
+            <div className={styles.managerHeader}>
+              <h2 className={styles.sectionTitle}>Historical Submissions Feed</h2>
+              <p className={styles.sectionDesc}>List of ex-factory reports submitted by your manufacturing centers.</p>
+            </div>
 
-          <div className={styles.actionRow}>
-            <button className={styles.importBtn} onClick={handlePreviewCsv}>
-              Preview Extracted Data
-            </button>
-          </div>
-
-          <div className={styles.infoBox}>
-            <span className={styles.infoTitle}>Validation Rules:</span>
-            <ul className={styles.infoList}>
-              <li>Country: RWA, KEN, ZAF, SEN</li>
-              <li>Year: 2014 to 2060</li>
-              <li>Product: vaccine, medicine</li>
-              <li>Unit: percent, usd, doses</li>
-            </ul>
-          </div>
-
-          {previewEntries.length > 0 && (
-            <div style={{ marginTop: '32px', borderTop: '1px solid var(--border)', paddingTop: '24px' }}>
-              <h3 className={styles.sectionTitle} style={{ fontSize: '1.1rem', marginBottom: '16px' }}>
-                Preview & Edit Records ({previewEntries.length})
-              </h3>
-              <div className={styles.tableWrapper} style={{ marginBottom: '24px' }}>
+            {mySubmissions.length === 0 ? (
+              <div className={styles.emptyState}>
+                <ClipboardList size={40} className={styles.emptyIcon} />
+                <p className={styles.emptyText}>No historical records found</p>
+                <p className={styles.emptySub}>Click the "Submit New Production Data" button above to log your first output metrics.</p>
+              </div>
+            ) : (
+              <div className={styles.tableWrapper}>
                 <table className={styles.table}>
                   <thead>
                     <tr>
-                      <th>Country</th>
-                      <th>Year</th>
-                      <th>Value</th>
-                      <th>Facility</th>
+                      <th>Reporting Period</th>
+                      <th>Vaccine Production Value (USD)</th>
+                      <th>Medicine Production Value (USD)</th>
+                      <th>Verification Status</th>
+                      <th>Trust Rating</th>
+                      <th>Date Logged</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {previewEntries.map((entry, idx) => (
-                      <tr key={idx}>
-                        <td>
-                          <select
-                            className={styles.select}
-                            style={{ padding: '6px' }}
-                            value={entry.countryCode}
-                            onChange={(e) => handlePreviewEdit(idx, 'countryCode', e.target.value)}
-                          >
-                            {COUNTRIES.map(c => <option key={c.code} value={c.code}>{c.code}</option>)}
-                          </select>
-                        </td>
-                        <td>
-                          <input
-                            type="text"
-                            className={styles.input}
-                            style={{ padding: '6px', width: '80px' }}
-                            value={entry.year}
-                            onChange={(e) => handlePreviewEdit(idx, 'year', e.target.value)}
-                          />
-                        </td>
-                        <td>
-                          <input
-                            type="text"
-                            className={styles.input}
-                            style={{ padding: '6px', width: '120px' }}
-                            value={entry.value}
-                            onChange={(e) => handlePreviewEdit(idx, 'value', Number(e.target.value))}
-                          />
-                        </td>
-                        <td>
-                          <input
-                            type="text"
-                            className={styles.input}
-                            style={{ padding: '6px' }}
-                            value={entry.facility || ''}
-                            onChange={(e) => handlePreviewEdit(idx, 'facility', e.target.value)}
-                          />
-                        </td>
-                        <td>
-                          <button
-                            className={styles.actionBtnDelete}
-                            onClick={() => handlePreviewRemove(idx)}
-                            title="Remove from batch"
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
+                    {mySubmissions.map(sub => {
+                      const isEditable = sub.status === 'draft';
+                      const canDelete = sub.status === 'draft' && !isDeleteExpired(sub.createdAt);
+                      
+                      return (
+                        <tr key={sub.id}>
+                          <td className={styles.tdYear}>{sub.reportingMonth} {sub.reportingYear}</td>
+                          <td className={styles.tdVal}>{fmtVal(sub.vaccineValue)}</td>
+                          <td className={styles.tdVal}>{fmtVal(sub.medicineValue)}</td>
+                          <td>
+                            <span className={`${styles.statusBadge} ${
+                              sub.status === 'published' ? styles.statusApproved : 
+                              sub.status === 'rejected' ? styles.statusRejected : styles.statusDraft
+                            }`}>
+                              {sub.status}
+                            </span>
+                          </td>
+                          <td>
+                            <span className={styles.trustBadge}>
+                              <CheckCircle2 size={10} /> 5/5 Rating
+                            </span>
+                          </td>
+                          <td className={styles.tdDate}>{formatDate(sub.createdAt)}</td>
+                          <td>
+                            <div className={styles.actionsCell}>
+                              <button
+                                className={styles.actionBtnEdit}
+                                onClick={() => handleEditClick(sub)}
+                                disabled={!isEditable}
+                                title={isEditable ? "Edit draft" : "Only draft records are editable"}
+                              >
+                                <Edit3 size={15} />
+                              </button>
+                              <button
+                                className={styles.actionBtnDelete}
+                                onClick={() => handleDeleteClick(sub)}
+                                disabled={!canDelete}
+                                title={getDeleteTooltip(sub)}
+                                style={{
+                                  opacity: canDelete ? 1 : 0.4,
+                                  cursor: canDelete ? 'pointer' : 'not-allowed'
+                                }}
+                              >
+                                <Trash2 size={15} />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
-              <div className={styles.actionRow} style={{ justifyContent: 'center' }}>
-                <button
-                  className={styles.submitBtn}
-                  style={{ width: '100%', maxWidth: '300px' }}
-                  onClick={handleSubmitPreview}
+            )}
+          </div>
+        </>
+      ) : (
+        /* FORM VIEW */
+        <div className={styles.formCard}>
+          <div className={styles.formHeader}>
+            <div>
+              <h2 className={styles.formCardTitle}>{editingSub ? 'Edit Production Override' : 'Submit Production Metrics'}</h2>
+              <p className={styles.formCardDesc}>Input the total ex-factory value for products manufactured inside your domestic operations.</p>
+            </div>
+            <button className={styles.backBtn} onClick={handleCancelForm}>
+              <ArrowLeft size={14} /> Back to History
+            </button>
+          </div>
+
+          <form className={styles.formBody}>
+            <div className={styles.formGrid}>
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Reporting Year <span className={styles.reqAsterisk}>*</span></label>
+                <select 
+                  className={styles.select} 
+                  value={reportingYear} 
+                  onChange={(e) => setReportingYear(e.target.value)}
                 >
-                  Confirm and Submit Records
-                </button>
+                  {Array.from({ length: 15 }, (_, i) => String(2016 + i)).map(y => (
+                    <option key={y} value={y}>{y}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Reporting Month <span className={styles.reqAsterisk}>*</span></label>
+                <select 
+                  className={styles.select} 
+                  value={reportingMonth} 
+                  onChange={(e) => setReportingMonth(e.target.value)}
+                >
+                  {MONTHS.map(m => (
+                    <option key={m} value={m}>{m}</option>
+                  ))}
+                </select>
               </div>
             </div>
-          )}
+
+            <div className={styles.formGrid}>
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Total Value of Locally Produced Human Vaccines (USD) <span className={styles.reqAsterisk}>*</span></label>
+                <div className={styles.inputPrefixWrapper}>
+                  <span className={styles.inputPrefix}>$</span>
+                  <input
+                    type="number"
+                    min="0"
+                    placeholder="e.g. 12500000"
+                    className={styles.input}
+                    value={vaccineValue}
+                    onChange={(e) => setVaccineValue(e.target.value)}
+                    required
+                  />
+                </div>
+                <span className={styles.inputTip}>Enter total ex-factory revenue. Can be 0 if no local vaccines are manufactured.</span>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Total Value of Locally Produced Medicaments (USD) <span className={styles.reqAsterisk}>*</span></label>
+                <div className={styles.inputPrefixWrapper}>
+                  <span className={styles.inputPrefix}>$</span>
+                  <input
+                    type="number"
+                    min="0"
+                    placeholder="e.g. 8500000"
+                    className={styles.input}
+                    value={medicineValue}
+                    onChange={(e) => setMedicineValue(e.target.value)}
+                    required
+                  />
+                </div>
+                <span className={styles.inputTip}>Enter total ex-factory revenue of medicaments (in USD). Can be 0 if none.</span>
+              </div>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.label}>Optional Evidence File Upload <span className={styles.optionalLabel}>(Max 10MB)</span></label>
+              <label className={styles.dropZone}>
+                <input 
+                  type="file" 
+                  className={styles.fileInput}
+                  onChange={(e) => setEvidenceFile(e.target.files?.[0]?.name || '')}
+                />
+                <Upload size={24} className={styles.uploadIcon} />
+                <span className={styles.uploadMainText}>Click to select file (PDF, Excel, image)</span>
+                <span className={styles.uploadSubText}>Provide audited reports, invoice registers, or certificates of production.</span>
+                {evidenceFile && (
+                  <span className={styles.uploadActiveBadge}>✓ Attached: {evidenceFile}</span>
+                )}
+              </label>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.label}>Optional Notes / Comments</label>
+              <textarea
+                placeholder="Include details regarding audit standards, facility name, specific vaccine profiles, or exchange rate baselines used..."
+                className={styles.textarea}
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                rows={4}
+              />
+            </div>
+
+            <div className={styles.formActions}>
+              <button 
+                type="button" 
+                className={styles.saveDraftBtn}
+                onClick={(e) => handleSaveSubmission(e, true)}
+              >
+                Save as Draft
+              </button>
+              <button 
+                type="button" 
+                className={styles.submitBtn}
+                onClick={(e) => handleSaveSubmission(e, false)}
+              >
+                {editingSub ? 'Update & Publish' : 'Submit Production Data'}
+              </button>
+            </div>
+          </form>
         </div>
-        )}
-      </div>
-
-      <section className={styles.managerSection}>
-        <div className={styles.managerHeader}>
-          <h2 className={styles.sectionTitle}>My Submissions Log</h2>
-          <p className={styles.sectionDesc}>Search, edit, and check status of entries submitted under your organization.</p>
-        </div>
-
-        {/* Filters */}
-        <div className={styles.filterBar}>
-          <div className={styles.searchWrapper}>
-            <span className={styles.searchIcon}><Search size={16} /></span>
-            <input
-              type="text"
-              placeholder="Search by facility or keyword..."
-              className={styles.searchInput}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-
-          <div className={styles.filtersGroup}>
-            <select
-              className={styles.filterSelect}
-              value={filterCountry}
-              onChange={(e) => setFilterCountry(e.target.value)}
-            >
-              <option value="all">🌍 All Countries</option>
-              {COUNTRIES.map((c) => (
-                <option key={c.code} value={c.code}>
-                  {c.flag} {c.name}
-                </option>
-              ))}
-            </select>
-
-            <select
-              className={styles.filterSelect}
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-            >
-              <option value="all">All Statuses</option>
-              <option value="draft">Draft</option>
-              <option value="submitted">Submitted</option>
-              <option value="approved">Approved</option>
-              <option value="rejected">Rejected</option>
-            </select>
-          </div>
-        </div>
-
-        {filteredEntries.length === 0 ? (
-          <div className={`card ${styles.emptyState}`}>
-            <span className={styles.emptyIcon}><Search size={48} strokeWidth={1.5} color="var(--text-muted)" /></span>
-            <p className={styles.emptyText}>No manual submissions found matching filters.</p>
-          </div>
-        ) : (
-          <div className={styles.tableWrapper}>
-            <table className={styles.table}>
-              <thead>
-                <tr>
-                  <th>Country</th>
-                  <th>Year</th>
-                  <th>Indicator</th>
-                  <th>Category</th>
-                  <th>Value</th>
-                  <th>Facility / Plant</th>
-                  <th>Documents</th>
-                  <th>Source Org</th>
-                  <th>Verification</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredEntries.map((entry) => (
-                  <tr key={entry.id} className={editingId === entry.id ? styles.editingRow : ''}>
-                    <td className={styles.tdCountry}>{getFlag(entry.countryCode)} {entry.countryCode}</td>
-                    <td className={styles.tdYear}>{entry.year}</td>
-                    <td className={styles.tdIndicator} title={entry.indicatorCode}>
-                      {getIndicatorLabel(entry.indicatorCode)}
-                    </td>
-                    <td className={styles.tdType}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        {entry.productType === 'vaccine' ? <Syringe size={14} /> : <Pill size={14} />}
-                        {entry.productType === 'vaccine' ? 'Vaccine' : 'Medicine'}
-                      </div>
-                    </td>
-                    <td className={styles.tdVal}>{fmtTableVal(entry.value, entry.metricUnit)}</td>
-                    <td className={styles.tdFacility}>{entry.facility || <span className={styles.mutedText}>—</span>}</td>
-                    <td>
-                      {entry.supportiveDocument ? (
-                        <span style={{ fontSize: '0.8rem', color: '#3B82F6', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '4px' }} title={entry.supportiveDocument}>
-                          <FileText size={14} /> Attached
-                        </span>
-                      ) : (
-                        <span className={styles.mutedText}>—</span>
-                      )}
-                    </td>
-                    <td className={styles.tdSource}>{entry.enteredBy}</td>
-                    <td>
-                      <span className={`${styles.statusBadge} ${
-                        entry.status === 'approved' ? styles.statusApproved : 
-                        entry.status === 'submitted' ? styles.statusSubmitted : 
-                        entry.status === 'rejected' ? styles.statusRejected : styles.statusDraft
-                      }`} title={entry.rejectionComment} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                        {entry.status === 'approved' && <CheckCircle2 size={12} />}
-                        {entry.status === 'submitted' && <Hourglass size={12} />}
-                        {entry.status === 'rejected' && <XCircle size={12} />}
-                        {entry.status === 'draft' && <Folder size={12} />}
-                        {entry.status}
-                      </span>
-                    </td>
-                    <td>
-                      <div className={styles.actionsCell}>
-                        <button
-                          className={styles.actionBtnEdit}
-                          onClick={() => handleEditClick(entry)}
-                          disabled={entry.status === 'approved'}
-                          title="Edit submission"
-                        >
-                          <Edit3 size={16} />
-                        </button>
-                        <button
-                          className={styles.actionBtnDelete}
-                          onClick={() => {
-                            if (isDeleteExpired(entry.timestamp)) {
-                              alert("Deletion window has expired. Submissions can only be deleted within 2 hours of submission.");
-                              return;
-                            }
-                            if (confirm("Are you sure you want to delete this submission?")) {
-                              onDeleteEntry(entry.id);
-                            }
-                          }}
-                          disabled={isDeleteExpired(entry.timestamp)}
-                          title={getDeleteTitle(entry)}
-                          style={{
-                            opacity: isDeleteExpired(entry.timestamp) ? 0.4 : 1,
-                            cursor: isDeleteExpired(entry.timestamp) ? 'not-allowed' : 'pointer'
-                          }}
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </section>
+      )}
     </div>
   );
 }
