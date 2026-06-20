@@ -232,7 +232,7 @@
   grid-template-columns: 1fr 1fr;
   min-height: calc(100vh - 64px);
   overflow: hidden;
-  background: transparent; /* Let the global world map show through! */
+  background: #FAFAFA;
   position: relative;
   z-index: 1;
 }
@@ -244,7 +244,7 @@
   justify-content: center;
   gap: 28px;
   padding: 80px 64px 80px 80px;
-  background: transparent; /* Let the global world map show through! */
+  background: #FAFAFA;
 }
 
 .heroPill {
@@ -390,7 +390,7 @@
 
 /* ── METRICS BAND ────────────────────────────────────────── */
 .metricsBand {
-  background: rgba(255, 255, 255, 0.85); /* Semi-transparent white! */
+  background: #fff;
   border-top: 1px solid rgba(15,23,42,0.06);
   border-bottom: 1px solid rgba(15,23,42,0.06);
   position: relative;
@@ -541,7 +541,6 @@
   padding: 72px 32px;
   position: relative;
   z-index: 1;
-  background: rgba(250, 250, 250, 0.9); /* Semi-transparent! */
 }
 .sectionHead {
   display: flex;
@@ -736,7 +735,7 @@
 /* ── FOOTER ──────────────────────────────────────────────── */
 .footer {
   border-top: 1px solid rgba(15,23,42,0.06);
-  background: rgba(255, 255, 255, 0.95); /* Semi-transparent! */
+  background: #fff;
   margin-top: auto;
   position: relative;
   z-index: 1;
