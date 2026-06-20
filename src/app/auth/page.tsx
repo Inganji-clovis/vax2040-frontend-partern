@@ -110,21 +110,6 @@ export default function AuthPage() {
           <p className={styles.projectSubtitle}>
             Tracking Africa's Progress<br />Toward Medicine and Vaccine Self-Sufficiency
           </p>
-          <div className={styles.africaMap}>
-            {/* Simple Africa Map SVG */}
-            <svg viewBox="0 0 100 100" className={styles.mapSvg}>
-              <path
-                d="M30 10 Q40 8 45 12 L50 20 Q55 28 52 35 L55 40 Q58 48 55 55 L50 60 Q45 68 48 75 L50 82 Q48 90 40 92 L30 90 Q22 85 20 78 L22 70 Q25 62 22 55 L20 48 Q22 40 25 35 L28 28 Q30 20 30 10 Z"
-                fill="rgba(255,255,255,0.12)"
-                stroke="rgba(255,255,255,0.4)"
-                strokeWidth="1.5"
-              />
-              <circle cx="35" cy="30" r="2" fill="rgba(255,255,255,0.6)" />
-              <circle cx="42" cy="45" r="2" fill="rgba(255,255,255,0.6)" />
-              <circle cx="40" cy="65" r="2" fill="rgba(255,255,255,0.6)" />
-              <circle cx="32" cy="75" r="2" fill="rgba(255,255,255,0.6)" />
-            </svg>
-          </div>
         </div>
       </div>
 
