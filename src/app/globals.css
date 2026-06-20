@@ -56,8 +56,8 @@ body::before {
   background-position: center;
   background-repeat: no-repeat;
   background-blend-mode: overlay;
-  opacity: 0.15; /* Very low visibility */
-  filter: grayscale(100%) brightness(1.2);
+  opacity: 0.18; /* Subtle, but visible! */
+  filter: grayscale(100%) brightness(1.3); /* White and clean! */
 }
 
 /* Subtle Africa highlight */
