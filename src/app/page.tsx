@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import styles from './page.module.css';
-import LoginView, { PartnerUser } from '../components/LoginView';
+import { PartnerUser } from '../components/LoginView';
 import DataEntryView from '../components/DataEntryView';
 import TrendChart from '../components/TrendChart';
 import { getWorldBankData, getWHOData, getOverrides, createOverride, updateOverride, deleteOverride } from '../lib/api';
@@ -30,7 +30,6 @@ export default function PublicPage() {
   const [trendsTab, setTrendsTab] = useState<'imports' | 'production'>('imports');
   const [focusCountry, setFocusCountry] = useState('RWA');
   const [partnerUser, setPartnerUser] = useState<PartnerUser | null>(null);
-  const [showLogin, setShowLogin] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [worldbankData, setWorldbankData] = useState<DashboardPayload | null>(null);
   const [manualEntries, setManualEntries] = useState<ManualEntry[]>([]);
@@ -230,9 +229,9 @@ export default function PublicPage() {
                 <button className={styles.navSignOut} onClick={handleLogout} title="Sign out"><IconLogOut /></button>
               </div>
             ) : (
-              <button className={styles.navSignIn} onClick={() => setShowLogin(true)} title="Sign In" aria-label="Sign In" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+              <a href="/auth" className={styles.navSignIn} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
                 Login <IconUser />
-              </button>
+              </a>
             )}
           </div>
         </div>
@@ -949,8 +948,6 @@ export default function PublicPage() {
           </div>
         </footer>
       )}
-
-      {showLogin && <LoginView onLoginSuccess={handleLoginSuccess} onCancel={() => setShowLogin(false)} />}
     </div>
   );
 }
