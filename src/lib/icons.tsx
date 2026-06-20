@@ -70,3 +70,40 @@ export const IconTruck = () => (
 export const IconFinance = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
 );
+
+export const IconSyringe = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="m18 2 4 4" />
+    <path d="m17 7 3-3" />
+    <path d="M16 9 9.8 15.2" />
+    <path d="m9 11-6 6" />
+    <path d="M5 14H3v2h2v-2Z" />
+    <path d="m5 21 1.4-1.4" />
+    <path d="M14 6 8 12" />
+    <path d="M10 4 4 10" />
+  </svg>
+);
+
+export const IconPackage = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="m7.5 4.27 9 5.15a1 1 0 0 1 .5.87v10.3a1 1 0 0 1-.5.87l-9 5.15a1 1 0 0 1-1 0l-9-5.15a1 1 0 0 1-.5-.87V10.3a1 1 0 0 1 .5-.87l9-5.15a1 1 0 0 1 1 0z" />
+    <path d="m3.29 7 9 5.15 9-5.15" />
+    <path d="M12 22V12.18" />
+  </svg>
+);
+
+export const IconPill = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z" />
+    <path d="m8.5 8.5 7 7" />
+  </svg>
+);
+
+export const IconGlobe = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10" />
+    <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+    <path d="M2 12h20" />
+  </svg>
+);
+

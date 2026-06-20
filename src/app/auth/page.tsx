@@ -79,6 +79,7 @@ export default function AuthPage() {
     setLoading(true);
     setTimeout(() => { 
       setLoading(false); 
+      localStorage.setItem('vax2040_partner_user', JSON.stringify({ email, org }));
       window.location.href = '/';
     }, 500);
   }

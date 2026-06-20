@@ -337,6 +337,28 @@ export default function DataEntryView({
     return `${val.toLocaleString()} Doses`;
   }
 
+  function isDeleteExpired(timestamp: string) {
+    if (!timestamp) return false;
+    const diffMs = new Date().getTime() - new Date(timestamp).getTime();
+    const twoHoursMs = 2 * 60 * 60 * 1000;
+    return diffMs >= twoHoursMs;
+  }
+
+  function getDeleteTitle(entry: ManualEntry) {
+    if (!entry.timestamp) return "Delete submission";
+    const diffMs = new Date().getTime() - new Date(entry.timestamp).getTime();
+    const twoHoursMs = 2 * 60 * 60 * 1000;
+    const remainingMs = twoHoursMs - diffMs;
+    if (remainingMs <= 0) return "Delete disabled (2-hour window expired)";
+    const remainingMins = Math.ceil(remainingMs / (1000 * 60));
+    if (remainingMins > 60) {
+      const hours = Math.floor(remainingMins / 60);
+      const mins = remainingMins % 60;
+      return `Delete submission (Allowed for another ${hours}h ${mins}m)`;
+    }
+    return `Delete submission (Allowed for another ${remainingMins}m)`;
+  }
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -836,8 +858,21 @@ export default function DataEntryView({
                         </button>
                         <button
                           className={styles.actionBtnDelete}
-                          onClick={() => onDeleteEntry(entry.id)}
-                          title="Delete submission"
+                          onClick={() => {
+                            if (isDeleteExpired(entry.timestamp)) {
+                              alert("Deletion window has expired. Submissions can only be deleted within 2 hours of submission.");
+                              return;
+                            }
+                            if (confirm("Are you sure you want to delete this submission?")) {
+                              onDeleteEntry(entry.id);
+                            }
+                          }}
+                          disabled={isDeleteExpired(entry.timestamp)}
+                          title={getDeleteTitle(entry)}
+                          style={{
+                            opacity: isDeleteExpired(entry.timestamp) ? 0.4 : 1,
+                            cursor: isDeleteExpired(entry.timestamp) ? 'not-allowed' : 'pointer'
+                          }}
                         >
                           <Trash2 size={16} />
                         </button>

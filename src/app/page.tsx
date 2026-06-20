@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import styles from './page.module.css';
 import { PartnerUser } from '../components/LoginView';
 import DataEntryView from '../components/DataEntryView';
@@ -15,7 +15,11 @@ import {
   IconCheck,
   IconUser,
   IconLogOut,
-  IconUpload
+  IconUpload,
+  IconSyringe,
+  IconPackage,
+  IconPill,
+  IconGlobe
 } from '../lib/icons';
 
 function fmtVal(val: number | null) {
@@ -36,6 +40,16 @@ export default function PublicPage() {
   const [loading, setLoading] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState<string>('');
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollRef.current) {
+      const scrollAmount = 300;
+      scrollRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
 
   async function refreshData() {
     setLoading(true);
@@ -160,6 +174,23 @@ export default function PublicPage() {
           </div>
 
           <div className={styles.navActions}>
+            {partnerUser && (
+              <div className={styles.partnerTabs}>
+                <button 
+                  className={`${styles.partnerTabBtn} ${activeTab === 'dashboard' ? styles.partnerTabBtnActive : ''}`}
+                  onClick={() => setActiveTab('dashboard')}
+                >
+                  Portal View
+                </button>
+                <button 
+                  className={`${styles.partnerTabBtn} ${activeTab === 'entry' ? styles.partnerTabBtnActive : ''}`}
+                  onClick={() => setActiveTab('entry')}
+                >
+                  Workspace
+                </button>
+              </div>
+            )}
+
             {partnerUser ? (
               <div className={styles.navUser}>
                 <div className={styles.navUserAvatar}>{partnerUser.org[0]}</div>
@@ -241,69 +272,186 @@ export default function PublicPage() {
               </div>
             </section>
 
-            {/* ── SECTION 2: THE DATA ───────────────────────── */}
-            <section id="the-data" className={`${styles.splitSectionRowReverse} ${styles.splitBgWhite}`}>
-              <div className={styles.splitTextSide}>
-                <span className={styles.splitEyebrow}>Where Africa Stands Today</span>
-                <h2 className={styles.splitH2}>55 countries, five tiers of production capacity</h2>
-                <p className={styles.splitBody}>
-                  We track and classify manufacturing readiness across five distinct tiers—from countries with no current capacity to those capable of full end-to-end drug substance production. Explore the interactive dashboard to see how individual nations are progressing toward their sovereignty targets.
-                </p>
-                <div className={styles.splitActions}>
-                  <a href="/dashboard" className={styles.heroBtnPrimary}>View full country breakdown</a>
-                  <a href="/download-dataset" className={styles.heroBtnSecondary}>Download dataset</a>
+            {/* ── SECTION 2: COUNTRY INTELLIGENCE ──────────────── */}
+            <section id="the-data" className={styles.countryIntelSection}>
+              <div className={styles.countryIntelInner}>
+
+                {/* Header row */}
+                <div className={styles.countryIntelHeader}>
+                  <span className={styles.splitEyebrow}>Live Country Intelligence</span>
+                  <h2 className={styles.countryIntelTitle}>Where Africa Stands Today</h2>
+                  <p className={styles.countryIntelSub}>
+                    Select any country to see real-time pharmaceutical manufacturing and import intelligence.
+                  </p>
                 </div>
-              </div>
-              <div className={styles.splitMediaSide}>
-                <div className={styles.splitMediaData}>
-                  <div style={{ width: '100%', maxWidth: '500px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                    <div className={styles.metricsCountries}>
-                      <span className={styles.metricsCountriesLabel}>Select country</span>
-                      <div className={styles.pillsRowDark}>
-                        {COUNTRIES.slice(0, 6).map(c => {
-                          const m = getMetrics(c.code);
-                          return (
-                            <button key={c.code} className={`${styles.pillDark} ${focusCountry === c.code ? styles.pillDarkActive : ''}`} onClick={() => setFocusCountry(c.code)}>
-                              <span>{c.flag}</span><span>{c.code}</span>
-                              <span className={styles.pillDarkPct}>{m.vLocalPct.toFixed(0)}%</span>
-                            </button>
-                          );
-                        })}
+
+                {/* Country selector tabs container */}
+                <div className={styles.countryTabsContainer}>
+                  <button className={styles.scrollBtn} onClick={() => scroll('left')} aria-label="Scroll left">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                  </button>
+                  
+                  <div ref={scrollRef} className={styles.countryTabsRow}>
+                    {COUNTRIES.map(c => {
+                      const m = getMetrics(c.code);
+                      const isActive = focusCountry === c.code;
+                      const isFeatured = c.active;
+                      return (
+                        <button
+                          key={c.code}
+                          className={`${styles.countryTab} ${isActive ? styles.countryTabActive : ''} ${!isFeatured ? styles.countryTabInactive : ''}`}
+                          onClick={() => setFocusCountry(c.code)}
+                        >
+                          <span className={styles.countryTabFlag}>{c.flag}</span>
+                          <span className={styles.countryTabName}>{c.name}</span>
+                          {isFeatured ? (
+                            <span className={styles.countryTabPct}>{m.vLocalPct.toFixed(0)}% local</span>
+                          ) : (
+                            <span className={styles.countryTabPctOffline}>Pipeline</span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  <button className={styles.scrollBtn} onClick={() => scroll('right')} aria-label="Scroll right">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                  </button>
+                </div>
+
+                {/* Main data card */}
+                <div className={styles.countryDataCard}>
+
+                  {/* Left: Progress ring + identity */}
+                  <div className={styles.countryDataLeft}>
+                    <div className={styles.countryRingWrap}>
+                      <svg width="140" height="140" viewBox="0 0 140 140">
+                        {/* Background track */}
+                        <circle cx="70" cy="70" r="58" strokeWidth="9" fill="transparent" stroke="rgba(30,136,229,0.1)" />
+                        {/* Target ring (ghost at 60%) */}
+                        <circle cx="70" cy="70" r="58" strokeWidth="4" fill="transparent" stroke="rgba(30,136,229,0.2)" strokeDasharray={`${2 * Math.PI * 58 * 0.6} ${2 * Math.PI * 58 * 0.4}`} strokeDashoffset={`${2 * Math.PI * 58 * 0.25}`} />
+                        {/* Progress arc */}
+                        <circle
+                          cx="70" cy="70" r="58"
+                          strokeWidth="9"
+                          fill="transparent"
+                          stroke="#1e88e5"
+                          strokeLinecap="round"
+                          strokeDasharray={`${2 * Math.PI * 58}`}
+                          strokeDashoffset={`${2 * Math.PI * 58 * (1 - Math.min(100, focusMetrics.vLocalPct) / 100)}`}
+                          style={{ transition: 'stroke-dashoffset 0.7s cubic-bezier(0.4,0,0.2,1)', transform: 'rotate(-90deg)', transformOrigin: 'center' }}
+                        />
+                        {/* Center text */}
+                        <text x="70" y="64" textAnchor="middle" fontSize="22" fontWeight="800" fill="#0F172A" fontFamily="var(--font-sans)" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                          {focusMetrics.vLocalPct.toFixed(1)}%
+                        </text>
+                        <text x="70" y="82" textAnchor="middle" fontSize="10" fontWeight="600" fill="#64748B" fontFamily="var(--font-sans)" letterSpacing="0.04em">
+                          LOCAL SHARE
+                        </text>
+                      </svg>
+                      <div className={styles.countryRingTarget}>
+                        <span>Target</span>
+                        <strong>60%</strong>
+                        <span>by 2040</span>
                       </div>
                     </div>
-                    
-                    <div className={styles.metricsRing}>
-                      <div className={styles.ringWrap} style={{ width: 100, height: 100 }}>
-                        <svg width="100" height="100" viewBox="0 0 100 100" style={{ transform: 'rotate(-90deg)' }}>
-                          <circle cx="50" cy="50" r="40" strokeWidth="7" fill="transparent" stroke="rgba(30,136,229,0.15)" />
-                          <circle cx="50" cy="50" r="40" strokeWidth="8" fill="transparent" stroke="#1e88e5" strokeLinecap="round" strokeDasharray={`${2 * Math.PI * 40}`} strokeDashoffset={`${2 * Math.PI * 40 * (1 - Math.min(60, focusMetrics.vLocalPct) / 100)}`} style={{ transition: 'stroke-dashoffset 0.8s ease' }} />
-                        </svg>
-                        <div className={styles.ringInner}>
-                          <span className={styles.ringNumDark}>{focusMetrics.vLocalPct.toFixed(1)}%</span>
-                        </div>
-                      </div>
-                      <div className={styles.metricsRingMeta}>
-                        <span className={styles.metricsRingTitle}>Local Share</span>
-                        <span className={styles.metricsRingTarget}>Target <strong>60%</strong> · 2040</span>
-                        <span className={styles.metricsRingCountry}>{focusCountryObj.flag} {focusCountryObj.name}</span>
-                      </div>
-                    </div>
-                    
-                    <div className={styles.metricsStats}>
-                      <div className={styles.metricsStat} style={{ padding: '0 16px 0 0', alignItems: 'flex-start' }}>
-                        <span className={styles.metricsStatVal}>{fmtVal(focusMetrics.vLocal)}</span>
-                        <span className={styles.metricsStatLabel}>Vaccine Local</span>
-                      </div>
-                      <div className={styles.metricsStatDivider} />
-                      <div className={styles.metricsStat} style={{ padding: '0 0 0 16px', alignItems: 'flex-start' }}>
-                        <span className={styles.metricsStatVal}>{fmtVal(focusMetrics.vImport)}</span>
-                        <span className={styles.metricsStatLabel}>Vaccine Imports</span>
+                    <div className={styles.countryIdentity}>
+                      <span className={styles.countryIdentityFlag}>{focusCountryObj.flag}</span>
+                      <div>
+                        <div className={styles.countryIdentityName}>{focusCountryObj.name}</div>
+                        <div className={styles.countryIdentityCode}>{focusCountryObj.code} · Latest Available Year</div>
                       </div>
                     </div>
                   </div>
+
+                  {/* Divider */}
+                  <div className={styles.countryDataDivider} />
+
+                  {/* Right: 4-stat grid */}
+                  <div className={styles.countryStatsGrid} style={{ position: 'relative' }}>
+                    <div className={`${styles.countryStat} ${styles.countryStatBlue}`}>
+                      <div className={styles.countryStatIcon}><IconSyringe /></div>
+                      <div className={styles.countryStatVal}>{fmtVal(focusMetrics.vLocal)}</div>
+                      <div className={styles.countryStatLabel}>Vaccine Local Production</div>
+                    </div>
+                    <div className={`${styles.countryStat} ${styles.countryStatOrange}`}>
+                      <div className={styles.countryStatIcon}><IconPackage /></div>
+                      <div className={styles.countryStatVal}>{fmtVal(focusMetrics.vImport)}</div>
+                      <div className={styles.countryStatLabel}>Vaccine Imports</div>
+                    </div>
+                    <div className={`${styles.countryStat} ${styles.countryStatGreen}`}>
+                      <div className={styles.countryStatIcon}><IconPill /></div>
+                      <div className={styles.countryStatVal}>{fmtVal(focusMetrics.mLocal)}</div>
+                      <div className={styles.countryStatLabel}>Medicine Local Production</div>
+                    </div>
+                    <div className={`${styles.countryStat} ${styles.countryStatPurple}`}>
+                      <div className={styles.countryStatIcon}><IconGlobe /></div>
+                      <div className={styles.countryStatVal}>{fmtVal(focusMetrics.mImport)}</div>
+                      <div className={styles.countryStatLabel}>Medicine Imports</div>
+                    </div>
+
+                    {!focusCountryObj.active && (
+                      <div className={styles.offlineOverlay}>
+                        <div className={styles.offlineGlow} />
+                        <span className={styles.offlineLock}>🔒</span>
+                        <h4 className={styles.offlineTitle}>Data In Pipeline</h4>
+                        <p className={styles.offlineText}>
+                          Audit overrides for {focusCountryObj.name} are currently pending review. Baseline estimates are offline.
+                        </p>
+                        <button className={styles.offlineBtn} onClick={() => alert("Activation priority request submitted for " + focusCountryObj.name)}>
+                          Request Priority Activation
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
+
               </div>
             </section>
+
+
+            {/* ── SECTION 2.5: TRENDS CHARTS ───────────────── */}
+            {worldbankData && (
+              <section id="trends" className={styles.trendsSection}>
+                <div className={styles.trendsContainer}>
+                  <div className={styles.trendsHeader}>
+                    <div>
+                      <h2 className={styles.trendsTitle}>Pharmaceutical Trade Trends</h2>
+                      <p className={styles.trendsSub}>
+                        Comparing local manufacturing capacity against import dependency across all tracked nations. Click a country pill above to highlight its trend line.
+                      </p>
+                    </div>
+                    <div className={styles.trendsTabs}>
+                      <button
+                        className={`${styles.trendsTab} ${trendsTab === 'imports' ? styles.trendsTabActive : ''}`}
+                        onClick={() => setTrendsTab('imports')}
+                      >
+                        Imports
+                      </button>
+                      <button
+                        className={`${styles.trendsTab} ${trendsTab === 'production' ? styles.trendsTabActive : ''}`}
+                        onClick={() => setTrendsTab('production')}
+                      >
+                        Local Production
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className={styles.chartsGrid}>
+                    <TrendChart
+                      payload={trendsTab === 'imports' ? worldbankData.vaccineImports : worldbankData.vaccineLocalProduction}
+                      title={trendsTab === 'imports' ? "Vaccine Imports (USD)" : "Vaccine Local Production (USD)"}
+                      focusCountry={focusCountry}
+                    />
+                    <TrendChart
+                      payload={trendsTab === 'imports' ? worldbankData.medicineImports : worldbankData.medicineLocalProduction}
+                      title={trendsTab === 'imports' ? "Medicine Imports (USD)" : "Medicine Local Production (USD)"}
+                      focusCountry={focusCountry}
+                    />
+                  </div>
+                </div>
+              </section>
+            )}
 
             {/* ── SECTION 3: THE PATH FORWARD ───────────────── */}
             <section id="our-approach" className={`${styles.splitSectionRow} ${styles.splitBgLight}`}>
@@ -331,8 +479,7 @@ export default function PublicPage() {
                   We invite researchers, policymakers, and NGOs to co-sign the framework and help shape the future of African health security. Access our full dataset, collaborate on policy briefs, and subscribe to vital updates.
                 </p>
                 <div className={styles.splitActions}>
-                  <a href="/download-dataset" className={styles.heroBtnPrimary}>Download the dataset</a>
-                  <a href="/partner-access" className={styles.heroBtnSecondary} style={{ color: 'white', borderColor: 'rgba(255,255,255,0.3)' }}>Partner with us</a>
+                  <a href="/partner-access" className={styles.heroBtnPrimary}>Partner with us</a>
                 </div>
               </div>
               <div className={styles.splitMediaSide}>
