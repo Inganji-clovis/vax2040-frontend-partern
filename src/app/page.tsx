@@ -230,8 +230,8 @@ export default function PublicPage() {
                 <button className={styles.navSignOut} onClick={handleLogout} title="Sign out"><IconLogOut /></button>
               </div>
             ) : (
-              <button className={styles.navSignIn} onClick={() => setShowLogin(true)} title="Sign In" aria-label="Sign In">
-                <IconUser />
+              <button className={styles.navSignIn} onClick={() => setShowLogin(true)} title="Sign In" aria-label="Sign In" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                Login <IconUser />
               </button>
             )}
           </div>
