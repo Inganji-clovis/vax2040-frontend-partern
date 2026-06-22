@@ -1650,3 +1650,30 @@
     align-items: flex-start;
   }
 }
+
+/* -- ADDITIONAL MOBILE RESPONSIVENESS -- */
+@media (max-width: 1024px) {
+  .hero { grid-template-columns: 1fr; }
+  .heroLeft { padding: 40px 32px; text-align: center; align-items: center; }
+  .heroActions { justify-content: center; }
+  .splitSectionRow, .splitSectionRowReverse { display: flex; flex-direction: column; }
+  .splitMediaSide { min-height: 300px; width: 100%; }
+}
+
+@media (max-width: 768px) {
+  .navCenter { display: none; }
+  .navWrap { padding: 0 16px; gap: 16px; }
+  .navLogo { height: 60px; width: 60px; }
+  .heroH1 { font-size: 2.4rem; }
+  .footerWrap { display: flex; flex-direction: column; gap: 32px; }
+  .metricsBandInner { padding: 24px 16px; flex-direction: column; align-items: flex-start; }
+}
+
+@media (max-width: 480px) {
+  .heroLeft { padding: 32px 16px; }
+  .heroH1 { font-size: 2rem; }
+  .navSignIn { padding: 8px 12px; font-size: 0.8rem; }
+  .countryIntelInner { padding: 0 8px; }
+  .countryDataCard { padding: 24px 16px; }
+}
+
