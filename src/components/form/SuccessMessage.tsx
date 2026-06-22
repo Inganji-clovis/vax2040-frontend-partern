@@ -9,14 +9,14 @@ interface SuccessMessageProps {
 export default function SuccessMessage({ message, onSubmitAnother }: SuccessMessageProps) {
   return (
     <div style={{
-      background: 'rgba(30,136,229,0.06)',
-      border: '1px solid rgba(30,136,229,0.2)',
+      background: 'rgba(10, 107, 106,0.06)',
+      border: '1px solid rgba(10, 107, 106,0.2)',
       borderRadius: '16px',
       padding: '40px 32px',
       textAlign: 'center'
     }}>
       <div style={{
-        background: '#1e88e5',
+        background: '#0A6B6A',
         color: '#fff',
         width: '72px', height: '72px',
         borderRadius: '50%',
@@ -37,28 +37,28 @@ export default function SuccessMessage({ message, onSubmitAnother }: SuccessMess
       <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', flexWrap: 'wrap' }}>
         <Link href="/donate" style={{
           display: 'inline-flex', alignItems: 'center', gap: '8px',
-          padding: '12px 24px', background: '#1e88e5', color: '#fff', border: 'none', borderRadius: '10px',
+          padding: '12px 24px', background: '#0A6B6A', color: '#fff', border: 'none', borderRadius: '10px',
           fontSize: '0.95rem', fontWeight: 700, textDecoration: 'none', transition: 'all 0.2s ease', cursor: 'pointer'
-        }} onMouseEnter={(e) => e.currentTarget.style.background = '#1565c0'}
-           onMouseLeave={(e) => e.currentTarget.style.background = '#1e88e5'}>
+        }} onMouseEnter={(e) => e.currentTarget.style.background = '#085453'}
+           onMouseLeave={(e) => e.currentTarget.style.background = '#0A6B6A'}>
           Return to Donate <IconArrow />
         </Link>
         {onSubmitAnother && (
           <button onClick={onSubmitAnother} style={{
             display: 'inline-flex', alignItems: 'center', gap: '8px',
-            padding: '12px 24px', background: 'transparent', color: '#1e88e5', border: '1.5px solid rgba(30,136,229,0.3)', borderRadius: '10px',
+            padding: '12px 24px', background: 'transparent', color: '#0A6B6A', border: '1.5px solid rgba(10, 107, 106,0.3)', borderRadius: '10px',
             fontSize: '0.95rem', fontWeight: 700, textDecoration: 'none', transition: 'all 0.2s ease', cursor: 'pointer'
-          }} onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(30,136,229,0.08)'; e.currentTarget.style.borderColor = '#1e88e5'; }}
-             onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(30,136,229,0.3)'; }}>
+          }} onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(10, 107, 106,0.08)'; e.currentTarget.style.borderColor = '#0A6B6A'; }}
+             onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(10, 107, 106,0.3)'; }}>
             Submit Another Form
           </button>
         )}
         <Link href="/" style={{
           display: 'inline-flex', alignItems: 'center', gap: '8px',
-          padding: '12px 24px', background: 'transparent', color: '#1e88e5', border: '1.5px solid rgba(30,136,229,0.3)', borderRadius: '10px',
+          padding: '12px 24px', background: 'transparent', color: '#0A6B6A', border: '1.5px solid rgba(10, 107, 106,0.3)', borderRadius: '10px',
           fontSize: '0.95rem', fontWeight: 700, textDecoration: 'none', transition: 'all 0.2s ease', cursor: 'pointer'
-        }} onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(30,136,229,0.08)'; e.currentTarget.style.borderColor = '#1e88e5'; }}
-           onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(30,136,229,0.3)'; }}>
+        }} onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(10, 107, 106,0.08)'; e.currentTarget.style.borderColor = '#0A6B6A'; }}
+           onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(10, 107, 106,0.3)'; }}>
           Go to Dashboard <IconArrow />
         </Link>
       </div>

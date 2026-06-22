@@ -45,14 +45,14 @@ export default function MedicalSupplyFormPage() {
 
       {/* Page Content */}
       <div style={{ maxWidth: '900px', margin: '0 auto', padding: '60px 40px' }}>
-        <Link href="/donate/data" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: '#1e88e5', textDecoration: 'none', marginBottom: '32px', fontWeight: 600 }}>
+        <Link href="/donate/data" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: '#0A6B6A', textDecoration: 'none', marginBottom: '32px', fontWeight: 600 }}>
           &larr; Back to Data Donation
         </Link>
         <div style={{ marginBottom: '36px' }}>
           <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '2rem', fontWeight: 800, color: '#0F172A', marginBottom: '12px' }}>
             {medicalSupplyFormConfig.title}
           </h1>
-          <p style={{ fontSize: '0.92rem', fontWeight: 600, color: '#1565c0', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.03em' }}>
+          <p style={{ fontSize: '0.92rem', fontWeight: 600, color: '#085453', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.03em' }}>
             {medicalSupplyFormConfig.targetRespondent}
           </p>
           <p style={{ fontSize: '1rem', color: '#64748B', lineHeight: 1.7 }}>

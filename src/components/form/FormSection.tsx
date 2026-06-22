@@ -20,7 +20,7 @@ export default function FormSection({ title, children }: FormSectionProps) {
         color: '#0F172A',
         marginBottom: '24px',
         fontFamily: 'var(--font-sans)',
-        borderBottom: '1px solid rgba(30,136,229,0.1)',
+        borderBottom: '1px solid rgba(10, 107, 106,0.1)',
         paddingBottom: '12px'
       }}>
         {title}

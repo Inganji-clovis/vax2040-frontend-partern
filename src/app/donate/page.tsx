@@ -163,16 +163,16 @@ export default function DonatePage() {
           gap: '8px',
           fontSize: '0.72rem',
           fontWeight: 700,
-          color: '#1565c0',
-          background: 'rgba(30,136,229,0.07)',
-          border: '1px solid rgba(30,136,229,0.18)',
+          color: '#085453',
+          background: 'rgba(10, 107, 106,0.07)',
+          border: '1px solid rgba(10, 107, 106,0.18)',
           padding: '5px 14px',
           borderRadius: '999px',
           textTransform: 'uppercase',
           letterSpacing: '0.05em',
           marginBottom: '28px'
         }}>
-          <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#1e88e5' }} />
+          <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#0A6B6A' }} />
           Support VAX2040
         </div>
         <h1 style={{
@@ -224,12 +224,12 @@ export default function DonatePage() {
             cursor: 'pointer'
           }} onMouseEnter={(e) => {
             e.currentTarget.style.transform = 'translateY(-4px)';
-            e.currentTarget.style.boxShadow = '0 16px 40px rgba(30,136,229,0.15)';
+            e.currentTarget.style.boxShadow = '0 16px 40px rgba(10, 107, 106,0.15)';
           }} onMouseLeave={(e) => {
             e.currentTarget.style.transform = 'translateY(0)';
             e.currentTarget.style.boxShadow = 'none';
           }}>
-            <div style={{ color: '#1e88e5', marginBottom: '18px' }}>
+            <div style={{ color: '#0A6B6A', marginBottom: '18px' }}>
               <IconDatabase />
             </div>
             <h3 style={{
@@ -254,7 +254,7 @@ export default function DonatePage() {
               alignItems: 'center',
               gap: '8px',
               padding: '10px 20px',
-              background: '#1e88e5',
+              background: '#0A6B6A',
               color: '#fff',
               border: 'none',
               borderRadius: '10px',
@@ -263,8 +263,8 @@ export default function DonatePage() {
               cursor: 'pointer',
               textDecoration: 'none',
               transition: 'all 0.2s ease'
-            }} onMouseEnter={(e) => { e.currentTarget.style.background = '#1565c0'; }}
-               onMouseLeave={(e) => { e.currentTarget.style.background = '#1e88e5'; }}>
+            }} onMouseEnter={(e) => { e.currentTarget.style.background = '#085453'; }}
+               onMouseLeave={(e) => { e.currentTarget.style.background = '#0A6B6A'; }}>
               Start Data Donation <IconArrow />
             </a>
           </div>
@@ -279,12 +279,12 @@ export default function DonatePage() {
             cursor: 'pointer'
           }} onMouseEnter={(e) => {
             e.currentTarget.style.transform = 'translateY(-4px)';
-            e.currentTarget.style.boxShadow = '0 16px 40px rgba(30,136,229,0.15)';
+            e.currentTarget.style.boxShadow = '0 16px 40px rgba(10, 107, 106,0.15)';
           }} onMouseLeave={(e) => {
             e.currentTarget.style.transform = 'translateY(0)';
             e.currentTarget.style.boxShadow = 'none';
           }}>
-            <div style={{ color: '#1e88e5', marginBottom: '18px' }}>
+            <div style={{ color: '#0A6B6A', marginBottom: '18px' }}>
               <IconBook />
             </div>
             <h3 style={{
@@ -309,7 +309,7 @@ export default function DonatePage() {
               alignItems: 'center',
               gap: '8px',
               padding: '10px 20px',
-              background: '#1e88e5',
+              background: '#0A6B6A',
               color: '#fff',
               border: 'none',
               borderRadius: '10px',
@@ -318,8 +318,8 @@ export default function DonatePage() {
               cursor: 'pointer',
               textDecoration: 'none',
               transition: 'all 0.2s ease'
-            }} onMouseEnter={(e) => { e.currentTarget.style.background = '#1565c0'; }}
-               onMouseLeave={(e) => { e.currentTarget.style.background = '#1e88e5'; }}>
+            }} onMouseEnter={(e) => { e.currentTarget.style.background = '#085453'; }}
+               onMouseLeave={(e) => { e.currentTarget.style.background = '#0A6B6A'; }}>
               Submit Evidence <IconArrow />
             </a>
           </div>
@@ -334,12 +334,12 @@ export default function DonatePage() {
             cursor: 'pointer'
           }} onMouseEnter={(e) => {
             e.currentTarget.style.transform = 'translateY(-4px)';
-            e.currentTarget.style.boxShadow = '0 16px 40px rgba(30,136,229,0.15)';
+            e.currentTarget.style.boxShadow = '0 16px 40px rgba(10, 107, 106,0.15)';
           }} onMouseLeave={(e) => {
             e.currentTarget.style.transform = 'translateY(0)';
             e.currentTarget.style.boxShadow = 'none';
           }}>
-            <div style={{ color: '#1e88e5', marginBottom: '18px' }}>
+            <div style={{ color: '#0A6B6A', marginBottom: '18px' }}>
               <IconPartnership />
             </div>
             <h3 style={{
@@ -364,7 +364,7 @@ export default function DonatePage() {
               alignItems: 'center',
               gap: '8px',
               padding: '10px 20px',
-              background: '#1e88e5',
+              background: '#0A6B6A',
               color: '#fff',
               border: 'none',
               borderRadius: '10px',
@@ -373,8 +373,8 @@ export default function DonatePage() {
               cursor: 'pointer',
               textDecoration: 'none',
               transition: 'all 0.2s ease'
-            }} onMouseEnter={(e) => { e.currentTarget.style.background = '#1565c0'; }}
-               onMouseLeave={(e) => { e.currentTarget.style.background = '#1e88e5'; }}>
+            }} onMouseEnter={(e) => { e.currentTarget.style.background = '#085453'; }}
+               onMouseLeave={(e) => { e.currentTarget.style.background = '#0A6B6A'; }}>
               Request Partner Access <IconArrow />
             </a>
           </div>
@@ -390,7 +390,7 @@ export default function DonatePage() {
             opacity: 0.8
           }} onMouseEnter={(e) => {
             e.currentTarget.style.transform = 'translateY(-4px)';
-            e.currentTarget.style.boxShadow = '0 16px 40px rgba(30,136,229,0.15)';
+            e.currentTarget.style.boxShadow = '0 16px 40px rgba(10, 107, 106,0.15)';
           }} onMouseLeave={(e) => {
             e.currentTarget.style.transform = 'translateY(0)';
             e.currentTarget.style.boxShadow = 'none';
@@ -462,11 +462,11 @@ export default function DonatePage() {
             padding: '32px'
           }}>
             <div style={{
-              background: 'rgba(30,136,229,0.1)',
+              background: 'rgba(10, 107, 106,0.1)',
               width: '56px', height: '56px',
               borderRadius: '12px',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: '#1e88e5',
+              color: '#0A6B6A',
               marginBottom: '20px'
             }}>
               <IconFactory />
@@ -478,7 +478,7 @@ export default function DonatePage() {
               Local Pharmaceutical Manufacturer
             </h3>
             <p style={{
-              fontSize: '0.85rem', fontWeight: 600, color: '#1565c0',
+              fontSize: '0.85rem', fontWeight: 600, color: '#085453',
               marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.03em'
             }}>
               Target Respondent: Production Director / Plant Manager
@@ -493,8 +493,8 @@ export default function DonatePage() {
               alignItems: 'center',
               gap: '8px',
               padding: '10px 18px',
-              border: '1.5px solid rgba(30,136,229,0.3)',
-              color: '#1e88e5',
+              border: '1.5px solid rgba(10, 107, 106,0.3)',
+              color: '#0A6B6A',
               background: 'transparent',
               borderRadius: '10px',
               fontSize: '0.88rem',
@@ -503,11 +503,11 @@ export default function DonatePage() {
               textDecoration: 'none',
               transition: 'all 0.2s ease'
             }} onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(30,136,229,0.08)';
-              e.currentTarget.style.borderColor = '#1e88e5';
+              e.currentTarget.style.background = 'rgba(10, 107, 106,0.08)';
+              e.currentTarget.style.borderColor = '#0A6B6A';
             }} onMouseLeave={(e) => {
               e.currentTarget.style.background = 'transparent';
-              e.currentTarget.style.borderColor = 'rgba(30,136,229,0.3)';
+              e.currentTarget.style.borderColor = 'rgba(10, 107, 106,0.3)';
             }}>
               Open Manufacturer Form <IconArrow />
             </a>
@@ -521,11 +521,11 @@ export default function DonatePage() {
             padding: '32px'
           }}>
             <div style={{
-              background: 'rgba(30,136,229,0.1)',
+              background: 'rgba(10, 107, 106,0.1)',
               width: '56px', height: '56px',
               borderRadius: '12px',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: '#1e88e5',
+              color: '#0A6B6A',
               marginBottom: '20px'
             }}>
               <IconShield />
@@ -537,7 +537,7 @@ export default function DonatePage() {
               National Regulatory Authority
             </h3>
             <p style={{
-              fontSize: '0.85rem', fontWeight: 600, color: '#1565c0',
+              fontSize: '0.85rem', fontWeight: 600, color: '#085453',
               marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.03em'
             }}>
               Target Respondent: Regulatory Officer / Data Analyst
@@ -552,8 +552,8 @@ export default function DonatePage() {
               alignItems: 'center',
               gap: '8px',
               padding: '10px 18px',
-              border: '1.5px solid rgba(30,136,229,0.3)',
-              color: '#1e88e5',
+              border: '1.5px solid rgba(10, 107, 106,0.3)',
+              color: '#0A6B6A',
               background: 'transparent',
               borderRadius: '10px',
               fontSize: '0.88rem',
@@ -562,11 +562,11 @@ export default function DonatePage() {
               textDecoration: 'none',
               transition: 'all 0.2s ease'
             }} onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(30,136,229,0.08)';
-              e.currentTarget.style.borderColor = '#1e88e5';
+              e.currentTarget.style.background = 'rgba(10, 107, 106,0.08)';
+              e.currentTarget.style.borderColor = '#0A6B6A';
             }} onMouseLeave={(e) => {
               e.currentTarget.style.background = 'transparent';
-              e.currentTarget.style.borderColor = 'rgba(30,136,229,0.3)';
+              e.currentTarget.style.borderColor = 'rgba(10, 107, 106,0.3)';
             }}>
               Open NRA Form <IconArrow />
             </a>
@@ -580,11 +580,11 @@ export default function DonatePage() {
             padding: '32px'
           }}>
             <div style={{
-              background: 'rgba(30,136,229,0.1)',
+              background: 'rgba(10, 107, 106,0.1)',
               width: '56px', height: '56px',
               borderRadius: '12px',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: '#1e88e5',
+              color: '#0A6B6A',
               marginBottom: '20px'
             }}>
               <IconTruck />
@@ -596,7 +596,7 @@ export default function DonatePage() {
               Central Medical Supply
             </h3>
             <p style={{
-              fontSize: '0.85rem', fontWeight: 600, color: '#1565c0',
+              fontSize: '0.85rem', fontWeight: 600, color: '#085453',
               marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.03em'
             }}>
               Target Respondent: Procurement Director / Logistics Manager
@@ -611,8 +611,8 @@ export default function DonatePage() {
               alignItems: 'center',
               gap: '8px',
               padding: '10px 18px',
-              border: '1.5px solid rgba(30,136,229,0.3)',
-              color: '#1e88e5',
+              border: '1.5px solid rgba(10, 107, 106,0.3)',
+              color: '#0A6B6A',
               background: 'transparent',
               borderRadius: '10px',
               fontSize: '0.88rem',
@@ -621,11 +621,11 @@ export default function DonatePage() {
               textDecoration: 'none',
               transition: 'all 0.2s ease'
             }} onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(30,136,229,0.08)';
-              e.currentTarget.style.borderColor = '#1e88e5';
+              e.currentTarget.style.background = 'rgba(10, 107, 106,0.08)';
+              e.currentTarget.style.borderColor = '#0A6B6A';
             }} onMouseLeave={(e) => {
               e.currentTarget.style.background = 'transparent';
-              e.currentTarget.style.borderColor = 'rgba(30,136,229,0.3)';
+              e.currentTarget.style.borderColor = 'rgba(10, 107, 106,0.3)';
             }}>
               Open Medical Supply Form <IconArrow />
             </a>
@@ -661,8 +661,8 @@ export default function DonatePage() {
           ].map((item, idx) => (
             <div key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '16px 0' }}>
               <div style={{
-                background: 'rgba(30,136,229,0.1)',
-                color: '#1e88e5',
+                background: 'rgba(10, 107, 106,0.1)',
+                color: '#0A6B6A',
                 width: '24px', height: '24px',
                 borderRadius: '50%',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -686,7 +686,7 @@ export default function DonatePage() {
 
       {/* ── Call to Action Section ─────────────────────────────────── */}
       <section style={{
-        background: 'linear-gradient(135deg, #1e88e5 0%, #1565c0 100%)',
+        background: 'linear-gradient(135deg, #0A6B6A 0%, #085453 100%)',
         padding: '70px 80px',
         maxWidth: '1360px',
         margin: '0 auto',
@@ -719,7 +719,7 @@ export default function DonatePage() {
             gap: '8px',
             padding: '14px 28px',
             background: '#fff',
-            color: '#1e88e5',
+            color: '#0A6B6A',
             border: 'none',
             borderRadius: '12px',
             fontSize: '0.98rem',

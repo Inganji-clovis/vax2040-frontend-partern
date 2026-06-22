@@ -34,7 +34,7 @@ export default function FormField({ label, id, type, value, onChange, required, 
           transition: 'all 0.2s ease',
           outline: 'none'
         }}
-        onFocus={(e) => e.target.style.borderColor = '#1e88e5'}
+        onFocus={(e) => e.target.style.borderColor = '#0A6B6A'}
         onBlur={(e) => e.target.style.borderColor = error ? '#EF4444' : 'rgba(15,23,42,0.12)'}
       />
       {error && <p style={{ color: '#EF4444', fontSize: '0.82rem', marginTop: '6px', marginBottom: 0 }}>{error}</p>}

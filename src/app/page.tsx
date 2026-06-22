@@ -2,7 +2,6 @@
 import { useState, useEffect, useRef } from 'react';
 import styles from './page.module.css';
 import { PartnerUser } from '../components/LoginView';
-import DataEntryView from '../components/DataEntryView';
 import TrendChart from '../components/TrendChart';
 import { getWorldBankData, getWHOData, getOverrides, createOverride, updateOverride, deleteOverride } from '../lib/api';
 import { DashboardPayload, WHOIndicatorPayload, ManualEntry } from '../lib/types';
@@ -30,7 +29,6 @@ function fmtVal(val: number | null) {
 }
 
 export default function PublicPage() {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'entry'>('dashboard');
   const [trendsTab, setTrendsTab] = useState<'imports' | 'production'>('imports');
   const [focusCountry, setFocusCountry] = useState('RWA');
   const [partnerUser, setPartnerUser] = useState<PartnerUser | null>(null);
@@ -65,12 +63,7 @@ export default function PublicPage() {
   useEffect(() => {
     setIsMounted(true);
     const stored = localStorage.getItem('vax2040_partner_user');
-    if (stored) {
-      try {
-        setPartnerUser(JSON.parse(stored));
-        setActiveTab('entry');
-      } catch {}
-    }
+    if (stored) { try { setPartnerUser(JSON.parse(stored)); } catch {} }
   }, []);
 
   useEffect(() => { if (isMounted) refreshData(); }, [partnerUser, isMounted]);
@@ -108,12 +101,10 @@ export default function PublicPage() {
   function handleLoginSuccess(user: PartnerUser) {
     setPartnerUser(user);
     localStorage.setItem('vax2040_partner_user', JSON.stringify(user));
-    setActiveTab('entry');
   }
   function handleLogout() {
     setPartnerUser(null);
     localStorage.removeItem('vax2040_partner_user');
-    setActiveTab('dashboard');
   }
   async function handleAddEntries(newEntries: Omit<ManualEntry, 'id' | 'timestamp'>[]) {
     try { await createOverride(newEntries, { partnerOrg: partnerUser?.org }); await refreshData(); } catch { alert('Failed to save.'); }
@@ -176,34 +167,21 @@ export default function PublicPage() {
             <a href="#get-involved" onClick={(e) => scrollToSection(e, 'get-involved')} className={`${styles.navItem} ${activeSection === 'get-involved' ? styles.navItemActive : ''}`}>
               Get Involved
             </a>
+            <a href="/forms/manufacturer" className={styles.navItem}>
+              Submit Data
+            </a>
           </div>
 
           <div className={styles.navActions}>
-            {partnerUser && (
-              <div className={styles.partnerTabs}>
-                <button 
-                  className={`${styles.partnerTabBtn} ${activeTab === 'dashboard' ? styles.partnerTabBtnActive : ''}`}
-                  onClick={() => setActiveTab('dashboard')}
-                >
-                  Portal View
-                </button>
-                <button 
-                  className={`${styles.partnerTabBtn} ${activeTab === 'entry' ? styles.partnerTabBtnActive : ''}`}
-                  onClick={() => setActiveTab('entry')}
-                >
-                  Workspace
-                </button>
-              </div>
-            )}
 
             {partnerUser ? (
               <div className={styles.navUser}>
-                <div className={styles.navUserAvatar}>{partnerUser.org[0]}</div>
-                <span className={styles.navUserName}>{partnerUser.org.split(' ')[0]}</span>
+                <div className={styles.navUserAvatar}>{(partnerUser.org || partnerUser.email || 'U')[0].toUpperCase()}</div>
+                <span className={styles.navUserName}>{(partnerUser.org || partnerUser.email || 'User').split('@')[0]}</span>
                 <button className={styles.navSignOut} onClick={handleLogout} title="Sign out"><IconLogOut /></button>
               </div>
             ) : (
-              <a href="/auth" className={styles.navSignIn} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
+              <a href="/select-role" className={styles.navSignIn} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
                 Login <IconUser />
               </a>
             )}
@@ -214,8 +192,6 @@ export default function PublicPage() {
       {loading && <div className={styles.loadBar}><div className={styles.loadBarFill} /></div>}
 
       <main>
-        {activeTab === 'dashboard' && (
-          <>
             {/* ── HERO ──────────────────────────────────────── */}
             <section className={styles.hero}>
               {/* Left: Text content */}
@@ -235,8 +211,14 @@ export default function PublicPage() {
                 </p>
 
                 <div className={styles.heroActions}>
-                  <a href="#the-data" className={styles.heroBtnPrimary} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-                    View Countries <IconArrow />
+                  <a href="/dashboard" className={styles.heroBtnPrimary} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                    Explore Dashboard <IconArrow />
+                  </a>
+                  <a href="/forms/manufacturer" className={styles.heroBtnSecondary} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                    Submit Data
+                  </a>
+                  <a href="/methodology" className={styles.heroBtnSecondary} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                    Read Methodology
                   </a>
                 </div>
               </div>
@@ -257,11 +239,11 @@ export default function PublicPage() {
                 </p>
                 <div style={{ display: 'flex', gap: '24px', marginTop: '16px' }}>
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <span style={{ fontSize: '1.75rem', fontWeight: 800, color: '#1e88e5' }}>99%</span>
+                    <span style={{ fontSize: '1.75rem', fontWeight: 800, color: '#0A6B6A' }}>99%</span>
                     <span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Imported Vaccines</span>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <span style={{ fontSize: '1.75rem', fontWeight: 800, color: '#1e88e5' }}>8 of 55</span>
+                    <span style={{ fontSize: '1.75rem', fontWeight: 800, color: '#0A6B6A' }}>8 of 55</span>
                     <span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Producing Countries</span>
                   </div>
                 </div>
@@ -326,15 +308,15 @@ export default function PublicPage() {
                     <div className={styles.countryRingWrap}>
                       <svg width="140" height="140" viewBox="0 0 140 140">
                         {/* Background track */}
-                        <circle cx="70" cy="70" r="58" strokeWidth="9" fill="transparent" stroke="rgba(30,136,229,0.1)" />
+                        <circle cx="70" cy="70" r="58" strokeWidth="9" fill="transparent" stroke="rgba(10, 107, 106,0.1)" />
                         {/* Target ring (ghost at 60%) */}
-                        <circle cx="70" cy="70" r="58" strokeWidth="4" fill="transparent" stroke="rgba(30,136,229,0.2)" strokeDasharray={`${2 * Math.PI * 58 * 0.6} ${2 * Math.PI * 58 * 0.4}`} strokeDashoffset={`${2 * Math.PI * 58 * 0.25}`} />
+                        <circle cx="70" cy="70" r="58" strokeWidth="4" fill="transparent" stroke="rgba(10, 107, 106,0.2)" strokeDasharray={`${2 * Math.PI * 58 * 0.6} ${2 * Math.PI * 58 * 0.4}`} strokeDashoffset={`${2 * Math.PI * 58 * 0.25}`} />
                         {/* Progress arc */}
                         <circle
                           cx="70" cy="70" r="58"
                           strokeWidth="9"
                           fill="transparent"
-                          stroke="#1e88e5"
+                          stroke="#0A6B6A"
                           strokeLinecap="round"
                           strokeDasharray={`${2 * Math.PI * 58}`}
                           strokeDashoffset={`${2 * Math.PI * 58 * (1 - Math.min(100, focusMetrics.vLocalPct) / 100)}`}
@@ -486,21 +468,9 @@ export default function PublicPage() {
               </div>
             </section>
 
-          </>
-        )}
-
-        {activeTab === 'entry' && (
-          <div style={{ maxWidth: 1180, margin: '0 auto', padding: '40px 24px' }}>
-            <DataEntryView
-              partnerUser={partnerUser}
-              existingCount={manualEntries.length}
-            />
-          </div>
-        )}
       </main>
 
       {/* ── FOOTER ──────────────────────────────────────── */}
-      {activeTab === 'dashboard' ? (
         <footer className={styles.footer}>
           <div className={styles.footerWrap}>
             {/* Quick Links Column */}
@@ -550,15 +520,6 @@ export default function PublicPage() {
             </div>
           </div>
         </footer>
-      ) : (
-        <footer className={styles.footerBottom}>
-          <div className={styles.footerBottomWrap}>
-            <div className={styles.footerCopyright}>
-              © 2026 Vax 2040 Research Center. All rights reserved.
-            </div>
-          </div>
-        </footer>
-      )}
     </div>
   );
 }

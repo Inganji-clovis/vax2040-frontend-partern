@@ -15,7 +15,7 @@ export default function ConsentBox({ id, label, checked, onChange, error }: Cons
           type="checkbox"
           checked={checked}
           onChange={(e) => onChange(e.target.checked)}
-          style={{ width: '20px', height: '20px', cursor: 'pointer', marginTop: '2px', accentColor: '#1e88e5' }}
+          style={{ width: '20px', height: '20px', cursor: 'pointer', marginTop: '2px', accentColor: '#0A6B6A' }}
         />
         {label}
       </label>

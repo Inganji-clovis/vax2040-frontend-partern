@@ -25,8 +25,8 @@
   font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
-  color: #1e88e5;
-  background: rgba(30,136,229,0.06);
+  color: #0A6B6A;
+  background: rgba(10, 107, 106,0.06);
   padding: 4px 10px;
   border-radius: 6px;
   width: fit-content;
@@ -55,7 +55,7 @@
   align-items: center;
   gap: 8px;
   padding: 12px 20px;
-  background: #1e88e5;
+  background: #0A6B6A;
   color: #ffffff;
   border: none;
   border-radius: 8px;
@@ -63,14 +63,14 @@
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 14px rgba(30,136,229,0.3);
+  box-shadow: 0 4px 14px rgba(10, 107, 106,0.3);
   flex-shrink: 0;
 }
 
 .submitNewBtn:hover {
-  background: #1565c0;
+  background: #085453;
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(30,136,229,0.4);
+  box-shadow: 0 6px 18px rgba(10, 107, 106,0.4);
 }
 
 /* Alerts */
@@ -294,9 +294,9 @@
 }
 
 .actionBtnEdit:hover:not(:disabled) {
-  background: rgba(30,136,229,0.06);
-  color: #1e88e5;
-  border-color: rgba(30,136,229,0.15);
+  background: rgba(10, 107, 106,0.06);
+  color: #0A6B6A;
+  border-color: rgba(10, 107, 106,0.15);
 }
 
 .actionBtnEdit:disabled {
@@ -501,8 +501,8 @@
 }
 
 .select:focus, .input:focus, .textarea:focus {
-  border-color: #1e88e5;
-  box-shadow: 0 0 0 3px rgba(30,136,229,0.08);
+  border-color: #0A6B6A;
+  box-shadow: 0 0 0 3px rgba(10, 107, 106,0.08);
 }
 
 .inputPrefixWrapper {
@@ -547,8 +547,8 @@
 }
 
 .dropZone:hover {
-  border-color: #1e88e5;
-  background: rgba(30,136,229,0.02);
+  border-color: #0A6B6A;
+  background: rgba(10, 107, 106,0.02);
 }
 
 .fileInput {
@@ -617,7 +617,7 @@
 
 .submitBtn {
   padding: 12px 24px;
-  background: #1e88e5;
+  background: #0A6B6A;
   color: #ffffff;
   border: none;
   border-radius: 8px;
@@ -625,13 +625,13 @@
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
-  box-shadow: 0 4px 14px rgba(30,136,229,0.25);
+  box-shadow: 0 4px 14px rgba(10, 107, 106,0.25);
 }
 
 .submitBtn:hover {
-  background: #1565c0;
+  background: #085453;
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(30,136,229,0.35);
+  box-shadow: 0 6px 18px rgba(10, 107, 106,0.35);
 }
 
 .submitBtn:active {

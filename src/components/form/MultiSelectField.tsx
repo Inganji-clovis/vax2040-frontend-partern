@@ -29,7 +29,7 @@ export default function MultiSelectField({ label, id, options, value, onChange, 
               type="checkbox"
               checked={value.includes(option)}
               onChange={() => handleOptionToggle(option)}
-              style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: '#1e88e5' }}
+              style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: '#0A6B6A' }}
             />
             {option}
           </label>

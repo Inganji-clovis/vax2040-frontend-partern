@@ -129,7 +129,7 @@ export default function DonateEvidencePage() {
 
       {/* Page Content */}
       <div style={{ maxWidth: '850px', margin: '0 auto', padding: '60px 40px' }}>
-        <Link href="/donate" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: '#1e88e5', textDecoration: 'none', marginBottom: '32px', fontWeight: 600 }}>
+        <Link href="/donate" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: '#0A6B6A', textDecoration: 'none', marginBottom: '32px', fontWeight: 600 }}>
           &larr; Back to Support VAX2040
         </Link>
 
@@ -211,10 +211,10 @@ export default function DonateEvidencePage() {
                 </Link>
                 <button type="submit" style={{
                   display: 'inline-flex', alignItems: 'center', gap: '8px',
-                  padding: '14px 32px', background: '#1e88e5', color: '#fff', border: 'none', borderRadius: '10px',
-                  fontSize: '1rem', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s ease', boxShadow: '0 4px 16px rgba(30,136,229,0.25)'
-                }} onMouseEnter={(e) => { e.currentTarget.style.background = '#1565c0'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
-                   onMouseLeave={(e) => { e.currentTarget.style.background = '#1e88e5'; e.currentTarget.style.transform = 'translateY(0)'; }}>
+                  padding: '14px 32px', background: '#0A6B6A', color: '#fff', border: 'none', borderRadius: '10px',
+                  fontSize: '1rem', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s ease', boxShadow: '0 4px 16px rgba(10, 107, 106,0.25)'
+                }} onMouseEnter={(e) => { e.currentTarget.style.background = '#085453'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+                   onMouseLeave={(e) => { e.currentTarget.style.background = '#0A6B6A'; e.currentTarget.style.transform = 'translateY(0)'; }}>
                   Submit Evidence <IconArrow />
                 </button>
               </div>

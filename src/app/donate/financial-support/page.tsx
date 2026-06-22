@@ -43,7 +43,7 @@ export default function FinancialSupportPage() {
 
       {/* Page Content */}
       <div style={{ maxWidth: '700px', margin: '0 auto', padding: '80px 40px', textAlign: 'center' }}>
-        <Link href="/donate" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: '#1e88e5', textDecoration: 'none', marginBottom: '40px', fontWeight: 600 }}>
+        <Link href="/donate" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: '#0A6B6A', textDecoration: 'none', marginBottom: '40px', fontWeight: 600 }}>
           &larr; Back to Support VAX2040
         </Link>
 
@@ -52,11 +52,11 @@ export default function FinancialSupportPage() {
           border: '1px solid rgba(15,23,42,0.08)',
           borderRadius: '24px',
           padding: '60px 48px',
-          boxShadow: '0 20px 60px rgba(30,136,229,0.12)'
+          boxShadow: '0 20px 60px rgba(10, 107, 106,0.12)'
         }}>
           <div style={{
-            background: 'rgba(30,136,229,0.1)',
-            color: '#1e88e5',
+            background: 'rgba(10, 107, 106,0.1)',
+            color: '#0A6B6A',
             width: '96px', height: '96px',
             borderRadius: '50%',
             display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
@@ -93,23 +93,23 @@ export default function FinancialSupportPage() {
           <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', flexWrap: 'wrap' }}>
             <Link href="/partner-access" style={{
               display: 'inline-flex', alignItems: 'center', gap: '8px',
-              padding: '13px 28px', background: '#1e88e5', color: '#fff', border: 'none', borderRadius: '12px',
+              padding: '13px 28px', background: '#0A6B6A', color: '#fff', border: 'none', borderRadius: '12px',
               fontSize: '0.98rem', fontWeight: 700, textDecoration: 'none', transition: 'all 0.2s ease', cursor: 'pointer'
-            }} onMouseEnter={(e) => e.currentTarget.style.background = '#1565c0'}
-               onMouseLeave={(e) => e.currentTarget.style.background = '#1e88e5'}>
+            }} onMouseEnter={(e) => e.currentTarget.style.background = '#085453'}
+               onMouseLeave={(e) => e.currentTarget.style.background = '#0A6B6A'}>
               Request Partner Access <IconArrow />
             </Link>
 
             <Link href="/contact" style={{
               display: 'inline-flex', alignItems: 'center', gap: '8px',
-              padding: '13px 28px', background: 'transparent', color: '#1e88e5', border: '1.5px solid rgba(30,136,229,0.3)', borderRadius: '12px',
+              padding: '13px 28px', background: 'transparent', color: '#0A6B6A', border: '1.5px solid rgba(10, 107, 106,0.3)', borderRadius: '12px',
               fontSize: '0.98rem', fontWeight: 700, textDecoration: 'none', transition: 'all 0.2s ease', cursor: 'pointer'
             }} onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(30,136,229,0.08)';
-              e.currentTarget.style.borderColor = '#1e88e5';
+              e.currentTarget.style.background = 'rgba(10, 107, 106,0.08)';
+              e.currentTarget.style.borderColor = '#0A6B6A';
             }} onMouseLeave={(e) => {
               e.currentTarget.style.background = 'transparent';
-              e.currentTarget.style.borderColor = 'rgba(30,136,229,0.3)';
+              e.currentTarget.style.borderColor = 'rgba(10, 107, 106,0.3)';
             }}>
               Contact VAX2040 <IconArrow />
             </Link>

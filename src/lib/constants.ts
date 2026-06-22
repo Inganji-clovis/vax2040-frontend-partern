@@ -62,7 +62,7 @@ export const COUNTRIES = [
 ];
 
 export const COUNTRY_COLORS: Record<string, string> = {
-  Rwanda: '#1e88e5',
+  Rwanda: '#0A6B6A',
   Kenya: '#EF4444',
   'South Africa': '#D97706',
   Senegal: '#3B82F6',
