@@ -213,62 +213,7 @@ export default function DonatePage() {
         margin: '0 auto',
         width: '100%'
       }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px' }}>
-          {/* Donate Data */}
-          <div style={{
-            background: '#fff',
-            border: '1px solid rgba(15,23,42,0.08)',
-            borderRadius: '16px',
-            padding: '28px',
-            transition: 'all 0.25s ease',
-            cursor: 'pointer'
-          }} onMouseEnter={(e) => {
-            e.currentTarget.style.transform = 'translateY(-4px)';
-            e.currentTarget.style.boxShadow = '0 16px 40px rgba(10, 107, 106,0.15)';
-          }} onMouseLeave={(e) => {
-            e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = 'none';
-          }}>
-            <div style={{ color: '#0A6B6A', marginBottom: '18px' }}>
-              <IconDatabase />
-            </div>
-            <h3 style={{
-              fontSize: '1.15rem',
-              fontWeight: 700,
-              color: '#0F172A',
-              marginBottom: '10px',
-              fontFamily: 'var(--font-sans)'
-            }}>
-              Donate Data
-            </h3>
-            <p style={{
-              fontSize: '0.92rem',
-              color: '#64748B',
-              lineHeight: 1.6,
-              marginBottom: '22px'
-            }}>
-              Share structured country-level data from local manufacturers, regulatory authorities, or central medical supply institutions.
-            </p>
-            <a href="/donate/data" style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '10px 20px',
-              background: '#0A6B6A',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '10px',
-              fontSize: '0.9rem',
-              fontWeight: 700,
-              cursor: 'pointer',
-              textDecoration: 'none',
-              transition: 'all 0.2s ease'
-            }} onMouseEnter={(e) => { e.currentTarget.style.background = '#085453'; }}
-               onMouseLeave={(e) => { e.currentTarget.style.background = '#0A6B6A'; }}>
-              Start Data Donation <IconArrow />
-            </a>
-          </div>
-
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px' }}>
           {/* Donate Evidence */}
           <div style={{
             background: '#fff',

@@ -9,6 +9,7 @@ const ROLE_META: Record<string, { label: string; formPath: string; color: string
   manufacturer: { label: 'Local Manufacturer',       formPath: '/forms/manufacturer', color: '#0A6B6A' },
   nra:          { label: 'National Regulatory Authority', formPath: '/forms/nra',      color: '#10b981' },
   supplier:     { label: 'Central Medical Supply',    formPath: '/forms/supplier',     color: '#8b5cf6' },
+  finance:      { label: 'National Finance & Planning Authority', formPath: '/forms/national-finance-planning', color: '#d97706' },
 };
 
 const AFRICAN_COUNTRIES = [

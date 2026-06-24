@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { FormConfig, FormField as FormFieldType } from '../../data/dataDonationFormsConfig';
 import FormField from './FormField';
 import SelectField from './SelectField';
@@ -17,6 +17,7 @@ interface DataDonationFormProps {
 }
 
 export default function DataDonationForm({ config }: DataDonationFormProps) {
+  const router = useRouter();
   const [formData, setFormData] = useState<Record<string, any>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -207,13 +208,13 @@ export default function DataDonationForm({ config }: DataDonationFormProps) {
       ))}
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '32px', flexWrap: 'wrap', gap: '16px' }}>
-        <Link href="/donate/data" style={{
+        <button type="button" style={{
           display: 'inline-flex', alignItems: 'center', gap: '8px',
           padding: '12px 24px', background: 'transparent', color: '#64748B', border: '1.5px solid rgba(100,116,139,0.2)', borderRadius: '10px',
-          fontSize: '0.95rem', fontWeight: 700, textDecoration: 'none', transition: 'all 0.2s ease', cursor: 'pointer'
-        }}>
-          Back to Data Donation
-        </Link>
+          fontSize: '0.95rem', fontWeight: 700, transition: 'all 0.2s ease', cursor: 'pointer'
+        }} onClick={() => router.push('/select-role')}>
+          Cancel
+        </button>
         <button type="submit" style={{
           display: 'inline-flex', alignItems: 'center', gap: '8px',
           padding: '14px 32px', background: '#0A6B6A', color: '#fff', border: 'none', borderRadius: '10px',

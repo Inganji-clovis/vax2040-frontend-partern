@@ -211,3 +211,72 @@ export const medicalSupplyFormConfig: FormConfig = {
     }
   ]
 };
+
+export const financePlanningFormConfig: FormConfig = {
+  id: 'national-finance-planning',
+  title: 'National Finance and Planning Authority Data Collection Form',
+  targetRespondent: 'Ministry of Planning / Ministry of Finance (Director of Macro-Economic Policy or Development Finance)',
+  introText: 'Use this form to submit macro-budgetary, development finance, fiscal incentive, tax policy, public procurement, and market guarantee data for VAX2040 review.',
+  successMessage: 'Your data donation has been received. VAX2040 Data Curators will review your submission before it is used in analysis.',
+  sections: [
+    {
+      id: 'profile',
+      title: 'Respondent Profile',
+      fields: [
+        { id: 'country', label: 'Country', type: 'select', required: true, options: countries },
+        { id: 'ministryDepartment', label: 'Ministry / Department', type: 'text', required: true },
+        { id: 'focalPointNameTitle', label: 'Focal Point Name & Title', type: 'text', required: true },
+        { id: 'emailAddress', label: 'Email Address', type: 'email', required: true },
+        { id: 'reportingPeriod', label: 'Reporting Period (Calendar Year)', type: 'number', required: true }
+      ]
+    },
+    {
+      id: 'macroBudgetaryAllocations',
+      title: 'Macro-Budgetary Allocations',
+      fields: [
+        { id: 'totalNationalBudget', label: 'Total National Budget approved for the current fiscal year (USD)', type: 'number', required: true },
+        { id: 'healthSectorAllocation', label: 'Health Sector Allocation to the Ministry of Health (USD)', type: 'number', required: true },
+        { id: 'pharmaceuticalIndustrialAllocation', label: 'Pharmaceutical Industrial Allocation for manufacturing infrastructure, R&D, or industrial parks, excluding direct medicine procurement (USD)', type: 'number', required: true }
+      ]
+    },
+    {
+      id: 'developmentFinance',
+      title: 'Development Finance & Sovereign Resource Mobilization',
+      fields: [
+        { id: 'dedicatedFunds', label: 'Does the country possess a sovereign wealth fund, national development bank, or public strategic fund with an explicit mandate to invest in domestic pharmaceutical manufacturing?', type: 'select', required: true, options: ['Yes', 'No', 'Unknown'] },
+        { id: 'publicCapitalDisbursed', label: 'Public capital disbursed by state-owned development banks to local pharmaceutical companies in the last 12 months (USD)', type: 'number', required: true },
+        { id: 'externalDevelopmentFinance', label: 'External concessional loans, grants, or bilateral financial packages earmarked for local vaccine or medicine production lines (USD)', type: 'number', required: true }
+      ]
+    },
+    {
+      id: 'fiscalIncentives',
+      title: 'Fiscal Incentives & Tax Policy',
+      fields: [
+        { id: 'standardCorporateTaxRate', label: 'Standard corporate tax rate (%)', type: 'number', required: true },
+        { id: 'pharmaManufacturerTaxRate', label: 'Corporate tax rate applied to certified domestic pharmaceutical manufacturers (%)', type: 'number', required: true },
+        { id: 'apiImportTariff', label: 'Import tariff applied to APIs and raw chemical materials used in local manufacturing (%)', type: 'number', required: true },
+        { id: 'finishedProductImportTariff', label: 'Import tariff applied to finished medicines that compete with local production (%)', type: 'number', required: true },
+        { id: 'equipmentVatExemption', label: 'VAT exemption on imported manufacturing machinery and lab equipment', type: 'select', required: true, options: ['Full Exemption', 'Partial Exemption', 'No Exemption'] },
+        { id: 'equipmentVatPartialExemptionRate', label: 'Partial VAT exemption rate, if applicable (%)', type: 'number', required: false }
+      ]
+    },
+    {
+      id: 'publicProcurement',
+      title: 'Public Procurement & Market Guarantees',
+      fields: [
+        { id: 'offtakeAgreements', label: 'Does the Ministry of Finance underwrite or guarantee long-term public offtake agreements of at least 5 years for locally manufactured vaccines and essential medicines?', type: 'select', required: true, options: ['Yes, actively implemented', 'Policy exists but not implemented', 'No policy exists', 'Unknown'] },
+        { id: 'pricePreferenceMargin', label: 'Price preference margin legally granted to local manufacturers over foreign bidders in public health tenders (%)', type: 'number', required: true },
+        { id: 'afcftaAlignment', label: 'Has the ministry allocated resources to integrate public procurement systems with regional African pharmaceutical pools or AfCFTA frameworks?', type: 'select', required: true, options: ['Yes', 'No', 'Unknown'] }
+      ]
+    },
+    {
+      id: 'evidence',
+      title: 'Supporting Evidence',
+      fields: [
+        { id: 'sourceLink', label: 'Source / document link', type: 'url', required: false },
+        { id: 'additionalNotes', label: 'Additional notes', type: 'textarea', required: false },
+        { id: 'consent', label: 'I confirm that the submitted information is accurate to the best of my knowledge and may be reviewed by VAX2040 Data Curators.', type: 'checkbox', required: true }
+      ]
+    }
+  ]
+};
