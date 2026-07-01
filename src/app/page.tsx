@@ -167,7 +167,12 @@ export default function PublicPage() {
             <a href="#get-involved" onClick={(e) => scrollToSection(e, 'get-involved')} className={`${styles.navItem} ${activeSection === 'get-involved' ? styles.navItemActive : ''}`}>
               Get Involved
             </a>
-            <a href="/forms/manufacturer" className={styles.navItem}>
+            {partnerUser && (
+              <a href="/dashboard" className={styles.navItem}>
+                Dashboard
+              </a>
+            )}
+            <a href={partnerUser ? "/dashboard" : "/select-role"} className={styles.navItem}>
               Submit Data
             </a>
           </div>
@@ -211,14 +216,8 @@ export default function PublicPage() {
                 </p>
 
                 <div className={styles.heroActions}>
-                  <a href="/dashboard" className={styles.heroBtnPrimary} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-                    Explore Dashboard <IconArrow />
-                  </a>
-                  <a href="/forms/manufacturer" className={styles.heroBtnSecondary} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-                    Submit Data
-                  </a>
-                  <a href="/methodology" className={styles.heroBtnSecondary} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-                    Read Methodology
+                  <a href={partnerUser ? "/dashboard" : "/select-role"} className={styles.heroBtnPrimary} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                    Submit Data <IconArrow />
                   </a>
                 </div>
               </div>

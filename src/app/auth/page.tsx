@@ -6,11 +6,49 @@ import styles from './page.module.css';
 
 // ── Role metadata ──────────────────────────────────────────
 const ROLE_META: Record<string, { label: string; formPath: string; color: string }> = {
-  manufacturer: { label: 'Local Manufacturer',       formPath: '/forms/manufacturer', color: '#0A6B6A' },
-  nra:          { label: 'National Regulatory Authority', formPath: '/forms/nra',      color: '#10b981' },
-  supplier:     { label: 'Central Medical Supply',    formPath: '/forms/supplier',     color: '#8b5cf6' },
-  finance:      { label: 'National Finance & Planning Authority', formPath: '/forms/national-finance-planning', color: '#d97706' },
+  manufacturer: { label: 'Local Manufacturer',       formPath: '/dashboard', color: '#0A6B6A' },
+  nra:          { label: 'National Regulatory Authority', formPath: '/dashboard', color: '#10b981' },
+  supplier:     { label: 'Central Medical Supply',    formPath: '/dashboard', color: '#8b5cf6' },
+  finance:      { label: 'Evidence Submission (Research/Analyst)', formPath: '/dashboard', color: '#d97706' },
 };
+
+const PARTNER_ORGS = [
+  'Manufacturer',
+  'Regulator (NRA)',
+  'Central Medical Supply',
+  'Evidence Submission (Research/Analyst)',
+];
+
+function mapRoleParamToOrg(param: string): string {
+  switch (param?.toLowerCase()) {
+    case 'manufacturer':
+      return 'Manufacturer';
+    case 'nra':
+      return 'Regulator (NRA)';
+    case 'supplier':
+      return 'Central Medical Supply';
+    case 'finance':
+    case 'evidence':
+      return 'Evidence Submission (Research/Analyst)';
+    default:
+      return 'Manufacturer';
+  }
+}
+
+function mapOrgToRoleParam(orgName: string): string {
+  switch (orgName) {
+    case 'Manufacturer':
+      return 'manufacturer';
+    case 'Regulator (NRA)':
+      return 'nra';
+    case 'Central Medical Supply':
+      return 'supplier';
+    case 'Evidence Submission (Research/Analyst)':
+      return 'finance';
+    default:
+      return 'manufacturer';
+  }
+}
 
 const AFRICAN_COUNTRIES = [
   'Algeria', 'Angola', 'Benin', 'Botswana', 'Burkina Faso', 'Burundi', 'Cabo Verde', 
@@ -53,6 +91,9 @@ function AuthPageInner() {
   // Sign In State
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [selectedOrg, setSelectedOrg] = useState(
+    roleParam ? mapRoleParamToOrg(roleParam) : PARTNER_ORGS[0]
+  );
   
   // Register State
   const [regFirstName, setRegFirstName] = useState('');
@@ -60,6 +101,9 @@ function AuthPageInner() {
   const [regEmail, setRegEmail] = useState('');
   const [regJobTitle, setRegJobTitle] = useState('');
   const [regOrg, setRegOrg] = useState('');
+  const [regOrgType, setRegOrgType] = useState(
+    roleParam ? mapRoleParamToOrg(roleParam) : PARTNER_ORGS[0]
+  );
   const [regCountry, setRegCountry] = useState('Rwanda');
   const [regPhone, setRegPhone] = useState('');
 
@@ -72,14 +116,16 @@ function AuthPageInner() {
   useEffect(() => {
     if (roleParam) {
       localStorage.setItem('vax2040_selected_role', roleParam);
+      const orgValue = mapRoleParamToOrg(roleParam);
+      setSelectedOrg(orgValue);
+      setRegOrgType(orgValue);
     }
   }, [roleParam]);
 
   const roleMeta = ROLE_META[roleParam] || null;
 
   function getRedirectPath() {
-    const savedRole = roleParam || localStorage.getItem('vax2040_selected_role') || '';
-    return ROLE_META[savedRole]?.formPath || '/';
+    return '/dashboard';
   }
 
   function handleSignIn(e: React.FormEvent) {
@@ -93,7 +139,11 @@ function AuthPageInner() {
     setTimeout(() => {
       setLoading(false);
       // For demo, just log them in
-      localStorage.setItem('vax2040_partner_user', JSON.stringify({ email, role: roleParam }));
+      localStorage.setItem('vax2040_partner_user', JSON.stringify({ 
+        email: email.trim(), 
+        role: mapOrgToRoleParam(selectedOrg), 
+        org: selectedOrg 
+      }));
       router.push(getRedirectPath());
     }, 800);
   }
@@ -222,10 +272,17 @@ function AuthPageInner() {
                     value={regOrg} onChange={(e) => setRegOrg(e.target.value)} required />
                 </div>
                 <div className={styles.field}>
-                  <label className={styles.label}>Job Title <span className={styles.required}>*</span></label>
-                  <input type="text" placeholder="e.g. Director" className={styles.input}
-                    value={regJobTitle} onChange={(e) => setRegJobTitle(e.target.value)} required />
+                  <label className={styles.label}>Choose Organisation Type <span className={styles.required}>*</span></label>
+                  <select className={styles.select} value={regOrgType} onChange={(e) => setRegOrgType(e.target.value)} required>
+                    {PARTNER_ORGS.map(o => <option key={o} value={o}>{o}</option>)}
+                  </select>
                 </div>
+              </div>
+
+              <div className={styles.field}>
+                <label className={styles.label}>Job Title <span className={styles.required}>*</span></label>
+                <input type="text" placeholder="e.g. Director" className={styles.input}
+                  value={regJobTitle} onChange={(e) => setRegJobTitle(e.target.value)} required />
               </div>
 
               <div className={styles.fieldGroup}>
@@ -254,7 +311,7 @@ function AuthPageInner() {
               <div className={styles.successIcon}><IconCheck /></div>
               <h3 className={styles.successTitle}>Request Submitted!</h3>
               <p className={styles.successDesc}>
-                Your access request for <strong>{regOrg}</strong> has been submitted successfully.
+                Your access request for <strong>{regOrg}</strong> ({regOrgType}) has been submitted successfully.
                 The VAX2040 team will review your details and activate your account within 24–48 hours.
                 You will receive an email once your account is ready.
               </p>
@@ -278,6 +335,13 @@ function AuthPageInner() {
                 <label className={styles.label}>Email Address</label>
                 <input type="email" placeholder="alice@ministry.gov.rw" className={styles.input}
                   value={email} onChange={(e) => setEmail(e.target.value)} required />
+              </div>
+
+              <div className={styles.field}>
+                <label className={styles.label}>Choose Access / Organisation <span className={styles.required}>*</span></label>
+                <select className={styles.select} value={selectedOrg} onChange={(e) => setSelectedOrg(e.target.value)} required>
+                  {PARTNER_ORGS.map(o => <option key={o} value={o}>{o}</option>)}
+                </select>
               </div>
 
               <div className={styles.field}>

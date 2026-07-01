@@ -256,6 +256,46 @@
   border: 1px solid rgba(71, 85, 105, 0.15);
 }
 
+.statusPending {
+  background: rgba(217, 119, 6, 0.06);
+  color: #d97706;
+  border: 1px solid rgba(217, 119, 6, 0.15);
+}
+
+/* Tabs Navigation Styling */
+.tabContainer {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  border-bottom: 2px solid rgba(15, 23, 42, 0.06);
+  padding-bottom: 2px;
+}
+
+.tabButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: -2px;
+}
+
+.tabButton:hover {
+  color: #0A6B6A;
+}
+
+.tabActive {
+  color: #0A6B6A;
+  border-bottom-color: #0A6B6A;
+}
+
 .trustBadge {
   display: inline-flex;
   align-items: center;

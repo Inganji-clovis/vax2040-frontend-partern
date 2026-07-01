@@ -8,7 +8,6 @@ import {
 
 interface Props {
   partnerUser: PartnerUser | null;
-  existingCount: number;
 }
 
 export interface ExtractedDataPoint {
@@ -25,7 +24,7 @@ export interface PartnerSubmission {
   partnerName: string; // The role chosen: "Manufacturer", "Regulator (NRA)", etc.
   reportingYear: string;
   reportingMonth: string;
-  status: 'draft' | 'published' | 'rejected';
+  status: 'draft' | 'published' | 'rejected' | 'submitted' | 'pending' | 'requires update';
   trustScore: number;
   createdAt: string;
   notes?: string;
@@ -412,7 +411,19 @@ export default function DataEntryView({ partnerUser }: Props) {
     );
   }
 
-  const role = partnerUser.org as PartnerSubmission['formType'];
+  let role = partnerUser.org as PartnerSubmission['formType'];
+  if (role) {
+    const rLower = role.toLowerCase();
+    if (rLower === 'manufacturer') {
+      role = 'Manufacturer';
+    } else if (rLower === 'nra' || rLower === 'regulator (nra)' || rLower.includes('regulator')) {
+      role = 'Regulator (NRA)';
+    } else if (rLower === 'supplier' || rLower === 'central medical supply' || rLower.includes('supply') || rLower.includes('supplier')) {
+      role = 'Central Medical Supply';
+    } else if (rLower === 'finance' || rLower === 'evidence' || rLower.includes('evidence') || rLower.includes('analyst') || rLower.includes('research')) {
+      role = 'Evidence Submission (Research/Analyst)';
+    }
+  }
 
   // Handle Dynamic Extracted Points (Evidence Form)
   const addDataPointRow = () => {
@@ -574,7 +585,7 @@ export default function DataEntryView({ partnerUser }: Props) {
       reportingMonth: currentMonth,
       notes: notes || undefined,
       formType: role,
-      status: asDraft ? 'draft' : 'published',
+      status: asDraft ? 'draft' : 'submitted',
     };
 
     if (role === 'Manufacturer') {
@@ -667,8 +678,8 @@ export default function DataEntryView({ partnerUser }: Props) {
   };
 
   const handleEditClick = (sub: PartnerSubmission) => {
-    if (sub.status !== 'draft') {
-      alert("Only draft submissions can be edited. Published or audited records require workstation overrides.");
+    if (sub.status !== 'draft' && sub.status !== 'requires update') {
+      alert("Only drafts or records requiring updates can be edited.");
       return;
     }
     setEditingSub(sub);
@@ -740,8 +751,8 @@ export default function DataEntryView({ partnerUser }: Props) {
   };
 
   const handleDeleteClick = (sub: PartnerSubmission) => {
-    if (sub.status !== 'draft') {
-      alert("Only draft submissions can be deleted.");
+    if (sub.status !== 'draft' && sub.status !== 'requires update') {
+      alert("Only draft submissions or records requiring updates can be deleted.");
       return;
     }
 
@@ -837,7 +848,7 @@ export default function DataEntryView({ partnerUser }: Props) {
   };
 
   const getDeleteTooltip = (sub: PartnerSubmission) => {
-    if (sub.status !== 'draft') return "Only draft submissions can be deleted";
+    if (sub.status !== 'draft' && sub.status !== 'requires update') return "Only draft submissions can be deleted";
     const elapsedMs = new Date().getTime() - new Date(sub.createdAt).getTime();
     const twoHoursMs = 2 * 60 * 60 * 1000;
     const remainingMs = twoHoursMs - elapsedMs;
@@ -899,6 +910,22 @@ export default function DataEntryView({ partnerUser }: Props) {
           <button className={styles.alertClose} onClick={() => setNotification(null)}><X size={14} /></button>
         </div>
       )}
+
+      {/* TAB NAVIGATION ROW */}
+      <div className={styles.tabContainer}>
+        <button 
+          className={`${styles.tabButton} ${viewMode === 'list' ? styles.tabActive : ''}`}
+          onClick={() => setViewMode('list')}
+        >
+          <ClipboardList size={16} /> Dashboard / History
+        </button>
+        <button 
+          className={`${styles.tabButton} ${viewMode === 'form' ? styles.tabActive : ''}`}
+          onClick={() => setViewMode('form')}
+        >
+          <FileText size={16} /> Data Entry Form
+        </button>
+      </div>
 
       {viewMode === 'list' ? (
         <>
@@ -1089,12 +1116,31 @@ export default function DataEntryView({ partnerUser }: Props) {
 
                           {/* Common columns */}
                           <td>
-                            <span className={`${styles.statusBadge} ${
-                              sub.status === 'published' ? styles.statusApproved : 
-                              sub.status === 'rejected' ? styles.statusRejected : styles.statusDraft
-                            }`}>
-                              {sub.status}
-                            </span>
+                            {(() => {
+                              let statusText = 'Pending';
+                              let statusClass = styles.statusPending;
+                              
+                              const stat = sub.status?.toLowerCase();
+                              if (stat === 'published' || stat === 'approved' || stat === 'accepted') {
+                                statusText = 'Accepted';
+                                statusClass = styles.statusApproved;
+                              } else if (stat === 'rejected' || stat === 'denied') {
+                                statusText = 'Denied';
+                                statusClass = styles.statusRejected;
+                              } else if (stat === 'draft' || stat === 'requires update') {
+                                statusText = 'Requires Update';
+                                statusClass = styles.statusDraft;
+                              } else if (stat === 'submitted' || stat === 'pending') {
+                                statusText = 'Pending';
+                                statusClass = styles.statusPending;
+                              }
+                              
+                              return (
+                                <span className={`${styles.statusBadge} ${statusClass}`}>
+                                  {statusText}
+                                </span>
+                              );
+                            })()}
                           </td>
                           {role === 'Manufacturer' && (
                             <td>

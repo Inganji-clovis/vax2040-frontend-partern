@@ -87,9 +87,9 @@ const ROLES = [
   {
     id: 'finance',
     number: 'Form 04',
-    title: 'National Finance & Planning Authority',
-    desc: 'You manage national budgets, development finance, fiscal policy, or public procurement guarantees. Use this form to share finance and market support data.',
-    target: 'Director of Macro-Economic Policy or Development Finance',
+    title: 'Evidence Submission (Research/Analyst)',
+    desc: 'You are an academic researcher or analyst. Use this form to submit papers, reports, and indicators to supply robust research evidence.',
+    target: 'Research Director / Policy Analyst / Academic Contributor',
     cardClass: styles.cardFinance,
     iconWrapClass: styles.iconFinance,
     icon: <IconFinance />,
