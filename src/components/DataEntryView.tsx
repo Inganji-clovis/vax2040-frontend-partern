@@ -1037,14 +1037,7 @@ export default function DataEntryView({ partnerUser, historyOnly, onEdit }: Prop
 
             {role === 'Manufacturer' && (
               <>
-                <div className={styles.statCard}>
-                  <span className={styles.statLabel}>Total Vaccines Logged</span>
-                  <span className={styles.statValue}>{fmtVal(mySubmissions.reduce((sum, s) => sum + (s.vaccineValue || 0), 0))}</span>
-                </div>
-                <div className={styles.statCard}>
-                  <span className={styles.statLabel}>Total Medicines Logged</span>
-                  <span className={styles.statValue}>{fmtVal(mySubmissions.reduce((sum, s) => sum + (s.medicineValue || 0), 0))}</span>
-                </div>
+                {/* Manufacturer custom volume cards removed */}
               </>
             )}
 
@@ -1069,15 +1062,6 @@ export default function DataEntryView({ partnerUser, historyOnly, onEdit }: Prop
                     {mySubmissions.length > 0
                       ? (mySubmissions.reduce((sum, s) => sum + (s.localProcurementPct || 0), 0) / mySubmissions.length).toFixed(1)
                       : '0.0'}%
-                  </span>
-                </div>
-                <div className={styles.statCard}>
-                  <span className={styles.statLabel}>Growth Rate (MoM)</span>
-                  <span className={styles.statValue} style={{ color: growth.isPositive ? '#00B087' : '#EF4444', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    {growth.isPositive ? '+' : '-'}{growth.pct}%
-                  </span>
-                  <span style={{ fontSize: '0.7rem', color: '#64748b', marginTop: '2px' }}>
-                    {growth.desc}
                   </span>
                 </div>
               </>
@@ -1106,6 +1090,16 @@ export default function DataEntryView({ partnerUser, historyOnly, onEdit }: Prop
               </span>
               <span style={{ fontSize: '0.7rem', color: '#64748b', marginTop: '2px' }}>
                 vs {contribution.peers} other sector contributors
+              </span>
+            </div>
+
+            <div className={styles.statCard}>
+              <span className={styles.statLabel}>Growth Rate (MoM)</span>
+              <span className={styles.statValue} style={{ color: growth.isPositive ? '#00B087' : '#EF4444', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                {growth.isPositive ? '+' : '-'}{growth.pct}%
+              </span>
+              <span style={{ fontSize: '0.7rem', color: '#64748b', marginTop: '2px' }}>
+                {growth.desc}
               </span>
             </div>
 
