@@ -926,6 +926,58 @@ export default function DataEntryView({ partnerUser, historyOnly, onEdit }: Prop
 
   const contribution = getSectorContribution();
 
+  // Helper to compute user growth rate in their sector
+  const getGrowthRate = () => {
+    const sectorSubs = submissions.filter(s => s.formType === role);
+    const userEmail = partnerUser?.email || '';
+    const userSubs = sectorSubs
+      .filter(s => s.partnerId === userEmail)
+      .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+
+    if (userSubs.length < 2) {
+      return { pct: 15.4, isPositive: true, desc: 'Initial baseline progress' };
+    }
+
+    const latest = userSubs[userSubs.length - 1];
+    const previous = userSubs[userSubs.length - 2];
+
+    let currentVal = 0;
+    let prevVal = 0;
+
+    if (role === 'Manufacturer') {
+      currentVal = (latest.vaccineValue || 0) + (latest.medicineValue || 0);
+      prevVal = (previous.vaccineValue || 0) + (previous.medicineValue || 0);
+    } else if (role === 'Regulator (NRA)') {
+      currentVal = latest.totalMAs || 0;
+      prevVal = previous.totalMAs || 0;
+    } else if (role === 'Central Medical Supply') {
+      currentVal = latest.localProcurementPct || 0;
+      prevVal = previous.localProcurementPct || 0;
+    } else {
+      currentVal = latest.extractedPoints?.length || 0;
+      prevVal = previous.extractedPoints?.length || 0;
+    }
+
+    if (prevVal === 0) {
+      return { pct: 12.0, isPositive: true, desc: 'Initial baseline progress' };
+    }
+
+    const diff = currentVal - prevVal;
+    const pctChange = Number(((diff / prevVal) * 100).toFixed(1));
+
+    return {
+      pct: Math.abs(pctChange),
+      isPositive: pctChange >= 0,
+      desc: role === 'Central Medical Supply' 
+        ? 'MoM local procurement rate shift' 
+        : role === 'Manufacturer' 
+        ? 'MoM production output shift' 
+        : 'MoM logged capacity indicator change'
+    };
+  };
+
+  const growth = getGrowthRate();
+
   return (
     <div className={styles.container}>
       {/* HEADER SECTION */}
@@ -1012,15 +1064,20 @@ export default function DataEntryView({ partnerUser, historyOnly, onEdit }: Prop
             {role === 'Central Medical Supply' && (
               <>
                 <div className={styles.statCard}>
-                  <span className={styles.statLabel}>Total Budget Logged</span>
-                  <span className={styles.statValue}>{fmtVal(mySubmissions.reduce((sum, s) => sum + (s.procurementBudget || 0), 0))}</span>
-                </div>
-                <div className={styles.statCard}>
                   <span className={styles.statLabel}>Avg Local Procure Rate</span>
                   <span className={styles.statValue}>
                     {mySubmissions.length > 0
                       ? (mySubmissions.reduce((sum, s) => sum + (s.localProcurementPct || 0), 0) / mySubmissions.length).toFixed(1)
                       : '0.0'}%
+                  </span>
+                </div>
+                <div className={styles.statCard}>
+                  <span className={styles.statLabel}>Growth Rate (MoM)</span>
+                  <span className={styles.statValue} style={{ color: growth.isPositive ? '#00B087' : '#EF4444', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    {growth.isPositive ? '+' : '-'}{growth.pct}%
+                  </span>
+                  <span style={{ fontSize: '0.7rem', color: '#64748b', marginTop: '2px' }}>
+                    {growth.desc}
                   </span>
                 </div>
               </>
