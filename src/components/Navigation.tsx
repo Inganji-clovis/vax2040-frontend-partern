@@ -18,6 +18,22 @@ const IconLogOut = () => (
   </svg>
 );
 
+function getPartnerFormPath(user: any) {
+  if (!user) return '/select-role';
+  const role = user.role || '';
+  if (role === 'manufacturer') return '/forms/manufacturer';
+  if (role === 'nra') return '/forms/nra';
+  if (role === 'supplier') return '/forms/supplier';
+  if (role === 'finance') return '/forms/national-finance-planning';
+  
+  const org = user.org || '';
+  if (org.includes('Manufacturer')) return '/forms/manufacturer';
+  if (org.includes('Regulator') || org.includes('NRA')) return '/forms/nra';
+  if (org.includes('Central') || org.includes('Supply')) return '/forms/supplier';
+  if (org.includes('Evidence') || org.includes('Research') || org.includes('Finance')) return '/forms/national-finance-planning';
+  return '/select-role';
+}
+
 export function Navigation() {
   const pathname = usePathname();
   const router = useRouter();
@@ -45,8 +61,8 @@ export function Navigation() {
       <div className="font-heading font-bold" style={{ fontSize: '1.25rem', color: 'var(--brand)', display: 'flex', alignItems: 'center', gap: '20px' }}>
         <Link href="/">VAX 2040</Link>
         {partnerUser && (
-          <Link href="/dashboard" style={{ fontSize: '0.9rem', color: '#64748b', fontWeight: 600, textDecoration: 'none', marginLeft: '10px' }}>
-            Dashboard
+          <Link href={getPartnerFormPath(partnerUser)} style={{ fontSize: '0.9rem', color: '#64748b', fontWeight: 600, textDecoration: 'none', marginLeft: '10px' }}>
+            Workspace
           </Link>
         )}
       </div>

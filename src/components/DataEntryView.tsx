@@ -8,6 +8,7 @@ import {
 
 interface Props {
   partnerUser: PartnerUser | null;
+  historyOnly?: boolean;
 }
 
 export interface ExtractedDataPoint {
@@ -309,9 +310,16 @@ const MOCK_SUBMISSIONS: PartnerSubmission[] = [
   }
 ];
 
-export default function DataEntryView({ partnerUser }: Props) {
+export default function DataEntryView({ partnerUser, historyOnly }: Props) {
   const [submissions, setSubmissions] = useState<PartnerSubmission[]>([]);
   const [viewMode, setViewMode] = useState<'list' | 'form'>('list');
+
+  useEffect(() => {
+    if (historyOnly) {
+      setViewMode('list');
+    }
+  }, [historyOnly]);
+
   const [editingSub, setEditingSub] = useState<PartnerSubmission | null>(null);
 
   // Common Form inputs
@@ -896,7 +904,7 @@ export default function DataEntryView({ partnerUser }: Props) {
           </p>
         </div>
 
-        {viewMode === 'list' && (
+        {!historyOnly && viewMode === 'list' && (
           <button className={styles.submitNewBtn} onClick={() => setViewMode('form')}>
             <Plus size={16} /> Submit New Data
           </button>
@@ -912,20 +920,22 @@ export default function DataEntryView({ partnerUser }: Props) {
       )}
 
       {/* TAB NAVIGATION ROW */}
-      <div className={styles.tabContainer}>
-        <button 
-          className={`${styles.tabButton} ${viewMode === 'list' ? styles.tabActive : ''}`}
-          onClick={() => setViewMode('list')}
-        >
-          <ClipboardList size={16} /> Dashboard / History
-        </button>
-        <button 
-          className={`${styles.tabButton} ${viewMode === 'form' ? styles.tabActive : ''}`}
-          onClick={() => setViewMode('form')}
-        >
-          <FileText size={16} /> Data Entry Form
-        </button>
-      </div>
+      {!historyOnly && (
+        <div className={styles.tabContainer}>
+          <button 
+            className={`${styles.tabButton} ${viewMode === 'list' ? styles.tabActive : ''}`}
+            onClick={() => setViewMode('list')}
+          >
+            <ClipboardList size={16} /> Dashboard / History
+          </button>
+          <button 
+            className={`${styles.tabButton} ${viewMode === 'form' ? styles.tabActive : ''}`}
+            onClick={() => setViewMode('form')}
+          >
+            <FileText size={16} /> Data Entry Form
+          </button>
+        </div>
+      )}
 
       {viewMode === 'list' ? (
         <>

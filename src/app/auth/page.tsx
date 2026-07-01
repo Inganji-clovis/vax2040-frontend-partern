@@ -6,10 +6,10 @@ import styles from './page.module.css';
 
 // ── Role metadata ──────────────────────────────────────────
 const ROLE_META: Record<string, { label: string; formPath: string; color: string }> = {
-  manufacturer: { label: 'Local Manufacturer',       formPath: '/dashboard', color: '#0A6B6A' },
-  nra:          { label: 'National Regulatory Authority', formPath: '/dashboard', color: '#10b981' },
-  supplier:     { label: 'Central Medical Supply',    formPath: '/dashboard', color: '#8b5cf6' },
-  finance:      { label: 'Evidence Submission (Research/Analyst)', formPath: '/dashboard', color: '#d97706' },
+  manufacturer: { label: 'Local Manufacturer',       formPath: '/forms/manufacturer', color: '#0A6B6A' },
+  nra:          { label: 'National Regulatory Authority', formPath: '/forms/nra',      color: '#10b981' },
+  supplier:     { label: 'Central Medical Supply',    formPath: '/forms/supplier',     color: '#8b5cf6' },
+  finance:      { label: 'Evidence Submission (Research/Analyst)', formPath: '/forms/national-finance-planning', color: '#d97706' },
 };
 
 const PARTNER_ORGS = [
@@ -125,7 +125,8 @@ function AuthPageInner() {
   const roleMeta = ROLE_META[roleParam] || null;
 
   function getRedirectPath() {
-    return '/dashboard';
+    const savedRole = mapOrgToRoleParam(selectedOrg) || localStorage.getItem('vax2040_selected_role') || '';
+    return ROLE_META[savedRole]?.formPath || '/';
   }
 
   function handleSignIn(e: React.FormEvent) {

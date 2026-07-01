@@ -28,6 +28,22 @@ function fmtVal(val: number | null) {
   return `$${val.toLocaleString()}`;
 }
 
+function getPartnerFormPath(user: any) {
+  if (!user) return '/select-role';
+  const role = user.role || '';
+  if (role === 'manufacturer') return '/forms/manufacturer';
+  if (role === 'nra') return '/forms/nra';
+  if (role === 'supplier') return '/forms/supplier';
+  if (role === 'finance') return '/forms/national-finance-planning';
+  
+  const org = user.org || '';
+  if (org.includes('Manufacturer')) return '/forms/manufacturer';
+  if (org.includes('Regulator') || org.includes('NRA')) return '/forms/nra';
+  if (org.includes('Central') || org.includes('Supply')) return '/forms/supplier';
+  if (org.includes('Evidence') || org.includes('Research') || org.includes('Finance')) return '/forms/national-finance-planning';
+  return '/select-role';
+}
+
 export default function PublicPage() {
   const [trendsTab, setTrendsTab] = useState<'imports' | 'production'>('imports');
   const [focusCountry, setFocusCountry] = useState('RWA');
@@ -168,11 +184,11 @@ export default function PublicPage() {
               Get Involved
             </a>
             {partnerUser && (
-              <a href="/dashboard" className={styles.navItem}>
-                Dashboard
+              <a href={getPartnerFormPath(partnerUser)} className={styles.navItem}>
+                Workspace
               </a>
             )}
-            <a href={partnerUser ? "/dashboard" : "/select-role"} className={styles.navItem}>
+            <a href={partnerUser ? getPartnerFormPath(partnerUser) : "/select-role"} className={styles.navItem}>
               Submit Data
             </a>
           </div>
@@ -216,7 +232,7 @@ export default function PublicPage() {
                 </p>
 
                 <div className={styles.heroActions}>
-                  <a href={partnerUser ? "/dashboard" : "/select-role"} className={styles.heroBtnPrimary} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                  <a href={partnerUser ? getPartnerFormPath(partnerUser) : "/select-role"} className={styles.heroBtnPrimary} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
                     Submit Data <IconArrow />
                   </a>
                 </div>
