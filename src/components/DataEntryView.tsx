@@ -894,6 +894,38 @@ export default function DataEntryView({ partnerUser, historyOnly, onEdit }: Prop
   // Filter list and aggregate stats based on Role
   const mySubmissions = submissions.filter(s => s.formType === role);
 
+  // Helper to compute sector contribution percentage
+  const getSectorContribution = () => {
+    const sectorSubs = submissions.filter(s => s.formType === role);
+    const totalSector = sectorSubs.length;
+    const userEmail = partnerUser?.email || '';
+    const userSubs = sectorSubs.filter(s => s.partnerId === userEmail);
+    const userCount = userSubs.length;
+
+    if (userCount === 0) {
+      return { percentage: 0, peers: 2, rank: 3 };
+    }
+
+    // Add mock peer count based on role to simulate a shared registry ecosystem
+    const mockPeerCount = role === 'Manufacturer' ? 6 : role === 'Regulator (NRA)' ? 4 : role === 'Central Medical Supply' ? 5 : 3;
+    const combinedTotal = totalSector + mockPeerCount;
+    
+    // User's contribution percentage of the total sector
+    const pct = Math.round((userCount / combinedTotal) * 100);
+    
+    let rank = 1;
+    if (pct < 30) rank = 3;
+    else if (pct < 50) rank = 2;
+
+    return {
+      percentage: pct,
+      peers: role === 'Manufacturer' ? 3 : role === 'Regulator (NRA)' ? 2 : role === 'Central Medical Supply' ? 2 : 2,
+      rank
+    };
+  };
+
+  const contribution = getSectorContribution();
+
   return (
     <div className={styles.container}>
       {/* HEADER SECTION */}
@@ -1006,6 +1038,19 @@ export default function DataEntryView({ partnerUser, historyOnly, onEdit }: Prop
                 </div>
               </>
             )}
+
+            <div className={styles.statCard}>
+              <span className={styles.statLabel}>Sector Contribution</span>
+              <span className={styles.statValue} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                {contribution.percentage}%
+                <span style={{ fontSize: '0.72rem', fontWeight: 700, padding: '2px 6px', borderRadius: '4px', background: 'rgba(10, 107, 106, 0.1)', color: '#0A6B6A', display: 'inline-block' }}>
+                  Rank #{contribution.rank}
+                </span>
+              </span>
+              <span style={{ fontSize: '0.7rem', color: '#64748b', marginTop: '2px' }}>
+                vs {contribution.peers} other sector contributors
+              </span>
+            </div>
 
             <div className={styles.statCard}>
               <span className={styles.statLabel}>Trust Score</span>
