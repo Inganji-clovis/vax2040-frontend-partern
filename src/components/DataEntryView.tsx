@@ -1102,13 +1102,6 @@ export default function DataEntryView({ partnerUser, historyOnly, onEdit }: Prop
                 {growth.desc}
               </span>
             </div>
-
-            <div className={styles.statCard}>
-              <span className={styles.statLabel}>Trust Score</span>
-              <span className={styles.statValue} style={{ color: '#00B087', display: 'flex', alignItems: 'center', gap: '6px', justifyContent: 'flex-end' }}>
-                5 / 5 <CheckCircle2 size={18} />
-              </span>
-            </div>
           </div>
 
           {/* TABLE LOG LIST (Per-Role customized headers) */}
