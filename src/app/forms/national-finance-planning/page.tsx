@@ -14,6 +14,8 @@ export default function NationalFinancePlanningForm() {
   const [userName, setUserName] = useState('');
   const [partnerUser, setPartnerUser] = useState<PartnerUser | null>(null);
   const [activeTab, setActiveTab] = useState<'form' | 'history'>('form');
+  const [editingSub, setEditingSub] = useState<any>(null);
+  const [initialFormData, setInitialFormData] = useState<Record<string, any>>({});
 
   useEffect(() => {
     const stored = localStorage.getItem('vax2040_partner_user');
@@ -29,6 +31,84 @@ export default function NationalFinancePlanningForm() {
       router.replace('/select-role');
     }
   }, [router]);
+
+  const handleEditClick = (sub: any) => {
+    setEditingSub(sub);
+    
+    let rawData = {};
+    if (sub.notes) {
+      try {
+        rawData = JSON.parse(sub.notes);
+      } catch (err) {
+        rawData = {};
+      }
+    }
+    
+    setInitialFormData(rawData);
+    setActiveTab('form');
+  };
+
+  const handleFormSubmit = (submittedData: Record<string, any>) => {
+    // Map the JSON form data to the PartnerSubmission format
+    const submissionData = {
+      reportingYear: String(submittedData.reportingPeriod || '2024'),
+      reportingMonth: 'January', // default month since annual form
+      status: 'submitted',
+      formType: 'Evidence Submission (Research/Analyst)' as any,
+      evidenceType: 'Research publication',
+      sourceTitle: `National Budget Report - ${submittedData.ministryDepartment || 'Ministry of Finance'}`,
+      sourceAuthor: submittedData.focalPointNameTitle || 'National Curator',
+      sourceDate: new Date().toISOString().split('T')[0],
+      findingsExcerpt: `Total Budget: $${Number(submittedData.totalNationalBudget).toLocaleString()}. Health Allocation: $${Number(submittedData.healthSectorAllocation).toLocaleString()}. Corporate Tax: ${submittedData.standardCorporateTaxRate}%.`,
+      extractedPoints: [
+        { indicator: 'Total National Budget', value: String(submittedData.totalNationalBudget), unit: 'USD', period: String(submittedData.reportingPeriod || '2024'), pageRef: 'Section 1' },
+        { indicator: 'Health Sector Allocation', value: String(submittedData.healthSectorAllocation), unit: 'USD', period: String(submittedData.reportingPeriod || '2024'), pageRef: 'Section 1' }
+      ],
+      creditContributor: 'Yes',
+      notes: JSON.stringify(submittedData)
+    };
+
+    const stored = localStorage.getItem('vax2040_partner_submissions');
+    let currentList = [];
+    if (stored) {
+      try {
+        currentList = JSON.parse(stored);
+      } catch (err) {
+        currentList = [];
+      }
+    }
+
+    let updated = [];
+    if (editingSub) {
+      updated = currentList.map((sub: any) => {
+        if (sub.id === editingSub.id) {
+          return {
+            ...sub,
+            ...submissionData,
+            createdAt: new Date().toISOString()
+          };
+        }
+        return sub;
+      });
+      alert('Form updated successfully!');
+      setEditingSub(null);
+    } else {
+      const newSub = {
+        id: 'sub_' + Math.random().toString(36).substr(2, 9),
+        partnerId: partnerUser?.email || userName || 'academic@kurasini.org',
+        partnerName: partnerUser?.org || 'Evidence Submission (Research/Analyst)',
+        trustScore: 5,
+        createdAt: new Date().toISOString(),
+        ...submissionData
+      };
+      updated = [newSub, ...currentList];
+      alert('Form submitted successfully!');
+    }
+
+    localStorage.setItem('vax2040_partner_submissions', JSON.stringify(updated));
+    setInitialFormData({});
+    setActiveTab('history');
+  };
 
   return (
     <div className="form-wrapper animate-fade-up">
@@ -112,10 +192,18 @@ export default function NationalFinancePlanningForm() {
           <p className="text-muted mb-6">
             {financePlanningFormConfig.introText}
           </p>
-          <DataDonationForm config={financePlanningFormConfig} />
+          <DataDonationForm 
+            config={financePlanningFormConfig} 
+            initialData={initialFormData} 
+            onSubmit={handleFormSubmit} 
+          />
         </div>
       ) : (
-        <DataEntryView partnerUser={partnerUser} historyOnly={true} />
+        <DataEntryView 
+          partnerUser={partnerUser} 
+          historyOnly={true} 
+          onEdit={handleEditClick} 
+        />
       )}
     </div>
   );

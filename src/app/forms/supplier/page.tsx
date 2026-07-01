@@ -19,6 +19,7 @@ export default function SupplierForm() {
   const [activeTab, setActiveTab] = useState<'form' | 'history'>('form');
   const [reportingYear, setReportingYear] = useState('2024');
   const [reportingMonth, setReportingMonth] = useState('January');
+  const [editingSub, setEditingSub] = useState<any>(null);
 
   useEffect(() => {
     const stored = localStorage.getItem('vax2040_partner_user');
@@ -59,20 +60,39 @@ export default function SupplierForm() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleEditClick = (sub: any) => {
+    setEditingSub(sub);
+    setReportingYear(sub.reportingYear || '2024');
+    setReportingMonth(sub.reportingMonth || 'January');
+    
+    setFormData({
+      totalBudget: String(sub.procurementBudget || ''),
+      budgetLocal: String(sub.localProcurementPct || ''),
+      budgetImported: String(sub.localProcurementPct ? 100 - sub.localProcurementPct : ''),
+      essentialTotal: '50',
+      essentialLocal: '30',
+      essentialImported: '20',
+      vaccinesTotal: '30',
+      vaccinesLocal: '5',
+      vaccinesImported: '25',
+      maternalTotal: '20',
+      maternalLocal: '10',
+      maternalImported: '10',
+      leadTimeLocal: String(sub.leadTimeLocal || ''),
+      leadTimeInternational: String(sub.leadTimeImported || ''),
+      stockoutsLocal: sub.stockoutDaysLocal > 30 ? 'Frequent' : sub.stockoutDaysLocal > 0 ? 'Occasional' : 'Never',
+      pricePreferenceLocal: sub.localPreference || 'Yes'
+    });
+
+    setActiveTab('form');
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Save to local storage submissions
-    const newSub = {
-      id: 'sub_' + Math.random().toString(36).substr(2, 9),
-      partnerId: partnerUser?.email || userName || 'purchasing@rms.gov.rw',
-      partnerName: partnerUser?.org || 'Central Medical Supply',
+    const submissionData = {
       reportingYear: reportingYear,
       reportingMonth: reportingMonth,
-      status: 'submitted',
-      trustScore: 5,
-      createdAt: new Date().toISOString(),
-      formType: 'Central Medical Supply',
       cmsName: partnerUser?.org || 'RMS Rwanda',
       cmsType: 'Central government procurement',
       procurementBudget: Number(formData.totalBudget) || 0,
@@ -99,10 +119,58 @@ export default function SupplierForm() {
         currentList = [];
       }
     }
-    const updated = [newSub, ...currentList];
+
+    let updated = [];
+    if (editingSub) {
+      updated = currentList.map((sub: any) => {
+        if (sub.id === editingSub.id) {
+          return {
+            ...sub,
+            ...submissionData,
+            createdAt: new Date().toISOString()
+          };
+        }
+        return sub;
+      });
+      alert('Form updated successfully!');
+      setEditingSub(null);
+    } else {
+      const newSub = {
+        id: 'sub_' + Math.random().toString(36).substr(2, 9),
+        partnerId: partnerUser?.email || userName || 'purchasing@rms.gov.rw',
+        partnerName: partnerUser?.org || 'Central Medical Supply',
+        status: 'submitted',
+        trustScore: 5,
+        createdAt: new Date().toISOString(),
+        formType: 'Central Medical Supply',
+        ...submissionData
+      };
+      updated = [newSub, ...currentList];
+      alert('Form submitted successfully!');
+    }
+
     localStorage.setItem('vax2040_partner_submissions', JSON.stringify(updated));
 
-    alert('Form submitted successfully!');
+    // Reset form fields
+    setFormData({
+      totalBudget: '',
+      budgetLocal: '',
+      budgetImported: '',
+      essentialTotal: '',
+      essentialLocal: '',
+      essentialImported: '',
+      vaccinesTotal: '',
+      vaccinesLocal: '',
+      vaccinesImported: '',
+      maternalTotal: '',
+      maternalLocal: '',
+      maternalImported: '',
+      leadTimeLocal: '',
+      leadTimeInternational: '',
+      stockoutsLocal: 'Occasional',
+      pricePreferenceLocal: 'Yes'
+    });
+
     setActiveTab('history');
   };
 
@@ -352,7 +420,7 @@ export default function SupplierForm() {
           </form>
         </div>
       ) : (
-        <DataEntryView partnerUser={partnerUser} historyOnly={true} />
+        <DataEntryView partnerUser={partnerUser} historyOnly={true} onEdit={handleEditClick} />
       )}
     </div>
   );

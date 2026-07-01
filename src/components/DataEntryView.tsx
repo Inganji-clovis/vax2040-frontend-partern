@@ -9,6 +9,7 @@ import {
 interface Props {
   partnerUser: PartnerUser | null;
   historyOnly?: boolean;
+  onEdit?: (sub: PartnerSubmission) => void;
 }
 
 export interface ExtractedDataPoint {
@@ -310,7 +311,7 @@ const MOCK_SUBMISSIONS: PartnerSubmission[] = [
   }
 ];
 
-export default function DataEntryView({ partnerUser, historyOnly }: Props) {
+export default function DataEntryView({ partnerUser, historyOnly, onEdit }: Props) {
   const [submissions, setSubmissions] = useState<PartnerSubmission[]>([]);
   const [viewMode, setViewMode] = useState<'list' | 'form'>('list');
 
@@ -688,6 +689,10 @@ export default function DataEntryView({ partnerUser, historyOnly }: Props) {
   const handleEditClick = (sub: PartnerSubmission) => {
     if (sub.status !== 'draft' && sub.status !== 'requires update') {
       alert("Only drafts or records requiring updates can be edited.");
+      return;
+    }
+    if (onEdit) {
+      onEdit(sub);
       return;
     }
     setEditingSub(sub);

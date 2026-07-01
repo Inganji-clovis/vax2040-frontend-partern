@@ -19,6 +19,7 @@ export default function NRAForm() {
   const [activeTab, setActiveTab] = useState<'form' | 'history'>('form');
   const [reportingYear, setReportingYear] = useState('2024');
   const [reportingMonth, setReportingMonth] = useState('January');
+  const [editingSub, setEditingSub] = useState<any>(null);
 
   useEffect(() => {
     const stored = localStorage.getItem('vax2040_partner_user');
@@ -52,39 +53,38 @@ export default function NRAForm() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleEditClick = (sub: any) => {
+    setEditingSub(sub);
+    setReportingYear(sub.reportingYear || '2024');
+    setReportingMonth(sub.reportingMonth || 'January');
+    
+    setFormData({
+      gbtMaturityLevel: sub.gbtLevel || 'ML3',
+      amaRatification: sub.amaRatified === 'Yes' ? 'Ratified' : 'No action',
+      totalAuthorizations: String(sub.totalMAs || ''),
+      domesticAuthorizations: String(sub.localMAs || ''),
+      foreignAuthorizations: String((sub.totalMAs || 0) - (sub.localMAs || 0) || ''),
+      averageTimelineDays: String(sub.medianApprovalTime ? sub.medianApprovalTime * 30 : ''),
+      fastTrackPathway: sub.acceleratedPathway || 'Yes',
+      localFacilitiesInspected: String(sub.gmpInspections || ''),
+      localFacilitiesNonCompliance: String(sub.nonCompliantFacilities || '')
+    });
+
+    setActiveTab('form');
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Save to local storage submissions
-    const newSub = {
-      id: 'sub_' + Math.random().toString(36).substr(2, 9),
-      partnerId: partnerUser?.email || userName || 'analyst@fda.gov.rw',
-      partnerName: partnerUser?.org || 'Regulator (NRA)',
+    const submissionData = {
       reportingYear: reportingYear,
       reportingMonth: reportingMonth,
-      status: 'submitted',
-      trustScore: 5,
-      createdAt: new Date().toISOString(),
-      formType: 'Regulator (NRA)',
-      nraName: partnerUser?.org || 'Rwanda Food and Drugs Authority',
       gbtLevel: formData.gbtMaturityLevel || 'ML3',
       amaRatified: formData.amaRatification === 'Ratified' ? 'Yes' : 'No',
-      regionalHarmonisation: 'Yes',
-      regionalScheme: 'EAC MRH',
-      installedCapacity: 50000000,
-      capacityUtilisation: 45,
-      productionLines: 4,
-      techPlatforms: ['mRNA', 'solid dose (tablets/capsules)'],
       gmpInspections: Number(formData.localFacilitiesInspected) || 0,
       nonCompliantFacilities: Number(formData.localFacilitiesNonCompliance) || 0,
-      batchCertificates: 85,
-      apiAfricaPct: 5,
-      packagingAfricaPct: 20,
-      techTransfer: 'Yes',
-      techTransferPartner: 'BioNTech SE',
       totalMAs: Number(formData.totalAuthorizations) || 0,
       localMAs: Number(formData.domesticAuthorizations) || 0,
-      newLocalMAs: 15,
       medianApprovalTime: Number(formData.averageTimelineDays) ? Math.round(Number(formData.averageTimelineDays) / 30) : 6,
       acceleratedPathway: formData.fastTrackPathway,
       notes: `Fast track registration pathways: ${formData.fastTrackPathway}. GBT Maturity: ${formData.gbtMaturityLevel}`
@@ -99,10 +99,64 @@ export default function NRAForm() {
         currentList = [];
       }
     }
-    const updated = [newSub, ...currentList];
+
+    let updated = [];
+    if (editingSub) {
+      updated = currentList.map((sub: any) => {
+        if (sub.id === editingSub.id) {
+          return {
+            ...sub,
+            ...submissionData,
+            createdAt: new Date().toISOString()
+          };
+        }
+        return sub;
+      });
+      alert('Form updated successfully!');
+      setEditingSub(null);
+    } else {
+      const newSub = {
+        id: 'sub_' + Math.random().toString(36).substr(2, 9),
+        partnerId: partnerUser?.email || userName || 'analyst@fda.gov.rw',
+        partnerName: partnerUser?.org || 'Regulator (NRA)',
+        status: 'submitted',
+        trustScore: 5,
+        createdAt: new Date().toISOString(),
+        formType: 'Regulator (NRA)',
+        nraName: partnerUser?.org || 'Rwanda Food and Drugs Authority',
+        regionalHarmonisation: 'Yes',
+        regionalScheme: 'EAC MRH',
+        installedCapacity: 50000000,
+        capacityUtilisation: 45,
+        productionLines: 4,
+        techPlatforms: ['mRNA', 'solid dose (tablets/capsules)'],
+        batchCertificates: 85,
+        apiAfricaPct: 5,
+        packagingAfricaPct: 20,
+        techTransfer: 'Yes',
+        techTransferPartner: 'BioNTech SE',
+        newLocalMAs: 15,
+        ...submissionData
+      };
+      updated = [newSub, ...currentList];
+      alert('Form submitted successfully!');
+    }
+
     localStorage.setItem('vax2040_partner_submissions', JSON.stringify(updated));
 
-    alert('Form submitted successfully!');
+    // Reset form fields
+    setFormData({
+      gbtMaturityLevel: 'ML3',
+      amaRatification: 'Ratified',
+      totalAuthorizations: '',
+      domesticAuthorizations: '',
+      foreignAuthorizations: '',
+      averageTimelineDays: '',
+      fastTrackPathway: 'Yes',
+      localFacilitiesInspected: '',
+      localFacilitiesNonCompliance: ''
+    });
+
     setActiveTab('history');
   };
 
@@ -323,7 +377,7 @@ export default function NRAForm() {
           </form>
         </div>
       ) : (
-        <DataEntryView partnerUser={partnerUser} historyOnly={true} />
+        <DataEntryView partnerUser={partnerUser} historyOnly={true} onEdit={handleEditClick} />
       )}
     </div>
   );

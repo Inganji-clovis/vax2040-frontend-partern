@@ -14,9 +14,11 @@ import { IconArrow } from '../../lib/icons';
 
 interface DataDonationFormProps {
   config: FormConfig;
+  initialData?: Record<string, any>;
+  onSubmit?: (data: Record<string, any>) => void;
 }
 
-export default function DataDonationForm({ config }: DataDonationFormProps) {
+export default function DataDonationForm({ config, initialData, onSubmit }: DataDonationFormProps) {
   const router = useRouter();
   const [formData, setFormData] = useState<Record<string, any>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -24,22 +26,26 @@ export default function DataDonationForm({ config }: DataDonationFormProps) {
 
   // Initialize form data with empty values
   useEffect(() => {
-    const initialData: Record<string, any> = {};
+    if (initialData && Object.keys(initialData).length > 0) {
+      setFormData(initialData);
+      return;
+    }
+    const initialDataObj: Record<string, any> = {};
     config.sections.forEach(section => {
       section.fields.forEach(field => {
         if (field.type === 'multiselect') {
-          initialData[field.id] = [];
+          initialDataObj[field.id] = [];
         } else if (field.type === 'checkbox') {
-          initialData[field.id] = false;
+          initialDataObj[field.id] = false;
         } else if (field.type === 'number') {
-          initialData[field.id] = '';
+          initialDataObj[field.id] = '';
         } else {
-          initialData[field.id] = '';
+          initialDataObj[field.id] = '';
         }
       });
     });
-    setFormData(initialData);
-  }, [config]);
+    setFormData(initialDataObj);
+  }, [config, initialData]);
 
   const handleChange = (fieldId: string, value: any) => {
     setFormData(prev => ({ ...prev, [fieldId]: value }));
@@ -88,6 +94,10 @@ export default function DataDonationForm({ config }: DataDonationFormProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
+      if (onSubmit) {
+        onSubmit(formData);
+        return;
+      }
       // Mock submission - store in localStorage
       const mockSubmission = {
         id: Date.now(),

@@ -19,6 +19,7 @@ export default function ManufacturerForm() {
   const [activeTab, setActiveTab] = useState<'form' | 'history'>('form');
   const [reportingYear, setReportingYear] = useState('2024');
   const [reportingMonth, setReportingMonth] = useState('January');
+  const [editingSub, setEditingSub] = useState<any>(null);
 
   useEffect(() => {
     const stored = localStorage.getItem('vax2040_partner_user');
@@ -69,20 +70,37 @@ export default function ManufacturerForm() {
     });
   };
 
+  const handleEditClick = (sub: any) => {
+    setEditingSub(sub);
+    setReportingYear(sub.reportingYear || '2024');
+    setReportingMonth(sub.reportingMonth || 'January');
+    
+    setFormData({
+      companyName: sub.manufacturerName || '',
+      country: sub.facilityAddress || '',
+      gmpStatus: sub.gmpStatus ? [sub.gmpStatus] : [],
+      facilityType: sub.facilityName ? sub.facilityName.split(', ') : [],
+      totalCapacity: '',
+      capacityUtilization: '',
+      volumeMedicines: String(sub.medicineValue || ''),
+      volumeVaccines: String(sub.vaccineValue || ''),
+      apiSourcedAfrica: '',
+      packagingSourcedAfrica: '',
+      primaryOriginRawMaterials: '',
+      percentPublicMarket: '',
+      percentPrivateMarket: '',
+      countriesExported: ''
+    });
+
+    setActiveTab('form');
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Save to local storage submissions
-    const newSub = {
-      id: 'sub_' + Math.random().toString(36).substr(2, 9),
-      partnerId: partnerUser?.email || userName || 'reporter@biontech.rw',
-      partnerName: partnerUser?.org || 'Manufacturer',
+    const submissionData = {
       reportingYear: reportingYear,
       reportingMonth: reportingMonth,
-      status: 'submitted',
-      trustScore: 5,
-      createdAt: new Date().toISOString(),
-      formType: 'Manufacturer',
       manufacturerName: formData.companyName,
       facilityName: formData.facilityType.join(', ') || 'mRNA Facility',
       facilityAddress: formData.country,
@@ -102,10 +120,56 @@ export default function ManufacturerForm() {
         currentList = [];
       }
     }
-    const updated = [newSub, ...currentList];
+
+    let updated = [];
+    if (editingSub) {
+      updated = currentList.map((sub: any) => {
+        if (sub.id === editingSub.id) {
+          return {
+            ...sub,
+            ...submissionData,
+            createdAt: new Date().toISOString()
+          };
+        }
+        return sub;
+      });
+      alert('Form updated successfully!');
+      setEditingSub(null);
+    } else {
+      const newSub = {
+        id: 'sub_' + Math.random().toString(36).substr(2, 9),
+        partnerId: partnerUser?.email || userName || 'reporter@biontech.rw',
+        partnerName: partnerUser?.org || 'Manufacturer',
+        status: 'submitted',
+        trustScore: 5,
+        createdAt: new Date().toISOString(),
+        formType: 'Manufacturer',
+        ...submissionData
+      };
+      updated = [newSub, ...currentList];
+      alert('Form submitted successfully!');
+    }
+
     localStorage.setItem('vax2040_partner_submissions', JSON.stringify(updated));
 
-    alert('Form submitted successfully!');
+    // Reset form fields
+    setFormData({
+      companyName: '',
+      country: '',
+      gmpStatus: [],
+      facilityType: [],
+      totalCapacity: '',
+      capacityUtilization: '',
+      volumeMedicines: '',
+      volumeVaccines: '',
+      apiSourcedAfrica: '',
+      packagingSourcedAfrica: '',
+      primaryOriginRawMaterials: '',
+      percentPublicMarket: '',
+      percentPrivateMarket: '',
+      countriesExported: ''
+    });
+
     setActiveTab('history');
   };
 
@@ -369,7 +433,7 @@ export default function ManufacturerForm() {
           </form>
         </div>
       ) : (
-        <DataEntryView partnerUser={partnerUser} historyOnly={true} />
+        <DataEntryView partnerUser={partnerUser} historyOnly={true} onEdit={handleEditClick} />
       )}
     </div>
   );
